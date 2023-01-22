@@ -1,30 +1,36 @@
 package org.cbzCompress.Utils;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
+import org.bytedeco.opencv.global.opencv_imgcodecs;
+import org.bytedeco.opencv.opencv_core.Mat;
+
 import java.io.File;
-import java.io.IOException;
 
 abstract class ImageUtil { //package-private
     protected static void convertAndSaveImage(String imagePath, int quality) {
+        File imageFile = new File(imagePath);
+        convertAndAdjustQuality(imageFile, quality);
+    }
+
+    private static void convertAndAdjustQuality(File imageFile, int quality) {
         try {
-            File imageFile = new File(imagePath);
-            BufferedImage img = ImageIO.read(imageFile);
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
-            ImageOutputStream ios = ImageIO.createImageOutputStream(imageFile);
-            writer.setOutput(ios);
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality((float) quality / 100);
-            writer.write(null, new IIOImage(img, null, null), param);
-            ios.close();
-            writer.dispose();
-        } catch (IOException e) {
-            e.printStackTrace();
+            // read the image file
+            Mat image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
+
+            // get the file name without the extension
+            String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
+            String orgExtension = SevenZUtil.getFileExtension(imageFile);
+            // create a new file with the same name in the same directory
+            File newFile = new File(imageFile.getParent(), pureFileName + ".jpg");
+            // write the image data to the new file with the quality
+            opencv_imgcodecs.imwrite(newFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
+            // delete the original file
+            if (!orgExtension.equals("jpg")) {
+                if (!imageFile.delete()) {
+                    System.out.println("Failed to delete original file");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error converting file: " + e.getMessage());
         }
     }
 }

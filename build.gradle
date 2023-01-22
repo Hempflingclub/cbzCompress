@@ -19,6 +19,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.tukaani:xz:1.9' // Dependency for commons-compress
+    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.8'
 }
 publishing {
     publications {
