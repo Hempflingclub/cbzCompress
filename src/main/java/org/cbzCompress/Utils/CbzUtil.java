@@ -13,5 +13,8 @@ abstract public class CbzUtil {
         return SevenZUtil.compressFolder(targetFolderPath, destPath);
     }
 
+    public static String testArchiveExtraction(String targetArchive, String destFolder) {
+        return SevenZUtil.extractArchive(targetArchive, destFolder);
+    }
 
 }

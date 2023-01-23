@@ -16,7 +16,7 @@ public class Main {
          */
         //To be done:
         /*
-        Extraction function
+        Extraction function halfway (now just need to get the content of files)
         Completed System
         .jar arguments, to define the baseFolders, without recompiling
          */
