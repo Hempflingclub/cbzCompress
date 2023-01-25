@@ -1,4 +1,4 @@
-package org.cbzCompress;
+package cbzCompress;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,17 +8,18 @@ public class Main {
         /*
         Image Compression (Conversion Png-JPG) works flawlessly now
         Compression of Folder into .cbz works
+        Extraction function
          */
         //To be Tested:
         /*
-        Image Compression, in function followed with Compression, but first of all Extraction is needed
-        Compression of a nested Folder (in case of poor prior Archives)
+        Image Compression, in function followed with Compression
          */
         //To be done:
         /*
-        Extraction function halfway (now just need to get the content of files)
         Completed System
         .jar arguments, to define the baseFolders, without recompiling
          */
+        String inputPath = "F:\\Projekte\\IntelliJ\\cbzCompress\\compressTest\\Input";
+        String outputPath = "F:\\Projekte\\IntelliJ\\cbzCompress\\compressTest\\Out";
     }
 }

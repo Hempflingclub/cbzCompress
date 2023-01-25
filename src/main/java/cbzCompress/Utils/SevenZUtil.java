@@ -1,8 +1,15 @@
-package org.cbzCompress.Utils;
+package cbzCompress.Utils;
 
-import org.apache.commons.compress.archivers.sevenz.*;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
+import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 
 abstract class SevenZUtil { //package-private
     protected static final String fileExtension = ".cbz";
@@ -33,41 +40,37 @@ abstract class SevenZUtil { //package-private
         }
     }
 
-    protected static String extractArchive(String filePath, String destPath) {
-        /*
-        Extract the Archive at filePath
-        The File can be a 7z Archive, or a Zip file, so both should be supported
-        Save the Contents of the Archive in the destPath, in a folder with the name set to the original file's name
-        TBD
-         */
+    protected static Path extractArchive(String filePath, String destPath) {
         File targetArchive = new File(filePath);
+        //Building Structure for Extracted Files
         String fileName = targetArchive.getName();
         String pureFileName = SevenZUtil.getPureFileName(fileName);
-        String outputFolderPath = destPath + File.separator + pureFileName;
-        File outputFolder = new File(outputFolderPath);
+        Path outputFolderPath = Path.of(destPath, File.separator, pureFileName);
+        File outputFolder = outputFolderPath.toFile();
         outputFolder.mkdir();
         try {
             SevenZFile archive = new SevenZFile(targetArchive);
             for (SevenZArchiveEntry archivedFile : archive.getEntries()) {
-                if (!archivedFile.isDirectory()) {
+                if (!archivedFile.isDirectory() && archivedFile.getSize() > 1) {
                     String currentFileName = archivedFile.getName();
                     //This will just get the 'filename' and not any folder structure of the archive, annoying to find out
                     currentFileName = currentFileName.substring(currentFileName.lastIndexOf("/") + 1);
                     String currentFilePath = outputFolderPath + File.separator + currentFileName;
+                    InputStream archivedFileInputStream = archive.getInputStream(archivedFile);
                     FileOutputStream out = new FileOutputStream(currentFilePath);
-                    byte[] content = new byte[(int) archivedFile.getSize()];
-                    // Need to actually get content
+                    byte[] content = archivedFileInputStream.readAllBytes();
                     archive.read(content, 0, content.length);
                     out.write(content);
                     out.close();
                 }
             }
             archive.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            return outputFolderPath;
+        } catch (IOException ioException) {
+            System.out.println("IOException during archive opening");
+            ioException.printStackTrace();
         }
-        return outputFolderPath;
+        return null;
     }
 
     protected static String getFileExtension(File file) {
