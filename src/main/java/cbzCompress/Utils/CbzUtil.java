@@ -34,7 +34,7 @@ abstract public class CbzUtil {
     }
 
     public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder) {
-        wait(1);
+        wait(30);
         Path resultArchive = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder);
         if (resultArchive == null) {
             return false;
