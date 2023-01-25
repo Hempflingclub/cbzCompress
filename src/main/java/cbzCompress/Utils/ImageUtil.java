@@ -6,8 +6,7 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import java.io.File;
 
 abstract class ImageUtil { //package-private
-    protected static void convertAndSaveImage(String imagePath, int quality) {
-        File imageFile = new File(imagePath);
+    protected static void convertAndSaveImage(File imageFile, int quality) {
         convertAndAdjustQuality(imageFile, quality);
     }
 
