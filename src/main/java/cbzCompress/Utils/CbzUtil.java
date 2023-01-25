@@ -2,6 +2,7 @@ package cbzCompress.Utils;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -34,11 +35,16 @@ abstract public class CbzUtil {
             Path orginalArchive = extractionResult[0];
             Path extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
             compressImagesInFolder(extractedFolder);
-            Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
-            //Delete temp folder, and original Archive
-            constantDelete(extractedFolder.toFile());
-            constantDelete(orginalArchive.toFile());
-            return resultArchive;
+            try {
+                Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
+                //Delete temp folder, and original Archive
+                constantDelete(extractedFolder.toFile());
+                constantDelete(orginalArchive.toFile());
+                return resultArchive;
+            } catch (IOException e) {
+                constantDelete(extractedFolder.toFile());
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

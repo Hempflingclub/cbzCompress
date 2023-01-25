@@ -1,15 +1,14 @@
 package cbzCompress.Utils;
 
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
-import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
+import org.apache.commons.compress.archivers.sevenz.*;
+import org.tukaani.xz.LZMA2Options;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -18,18 +17,21 @@ import static java.lang.Thread.sleep;
 abstract class SevenZUtil { //package-private
     protected static final String fileExtension = ".cbz";
 
-    protected static Path compressFolder(String folderPath, String destinationDir) {
+    protected static Path compressFolder(String folderPath, String destinationDir) throws IOException {
         File folder = new File(folderPath);
         String fileName = folder.getName();
         String outputFilePath = destinationDir + File.separator + fileName + fileExtension;
-        try {
-            SevenZOutputFile sevenZOutput = new SevenZOutputFile(new File(outputFilePath));
-            sevenZOutput.setContentCompression(SevenZMethod.LZMA2);
-            compressFolderUtil(folder, sevenZOutput);
-            sevenZOutput.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        File outputFile = new File(outputFilePath);
+        if (outputFile.exists()) {
+            while (!outputFile.delete()) ;
         }
+        SevenZOutputFile sevenZOutput = new SevenZOutputFile(outputFile);
+        LZMA2Options lzma2Options = new LZMA2Options();
+        lzma2Options.setPreset(LZMA2Options.PRESET_MAX);
+        lzma2Options.setDictSize(16 << 20);
+        sevenZOutput.setContentMethods(Collections.singleton(new SevenZMethodConfiguration(SevenZMethod.LZMA, lzma2Options)));
+        compressFolderUtil(folder, sevenZOutput);
+        sevenZOutput.close();
         return Path.of(outputFilePath);
     }
 
