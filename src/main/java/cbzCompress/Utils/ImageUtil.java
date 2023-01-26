@@ -11,25 +11,56 @@ abstract class ImageUtil { //package-private
     }
 
     private static void convertAndAdjustQuality(File imageFile, int quality) {
-        try {
-            // read the image file
-            Mat image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
-
-            // get the file name without the extension
-            String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
-            String orgExtension = SevenZUtil.getFileExtension(imageFile);
-            // create a new file with the same name in the same directory
-            File newFile = new File(imageFile.getParent(), pureFileName + ".jpg");
-            // write the image data to the new file with the quality
-            opencv_imgcodecs.imwrite(newFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
-            // delete the original file
-            if (!orgExtension.equals("jpg")) {
-                if (!imageFile.delete()) {
-                    System.out.println("Failed to delete original file");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error converting file: " + e.getMessage());
+        // read the image file
+        Mat image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
+        // get the file name without the extension
+        String orgExtension = SevenZUtil.getFileExtension(imageFile);
+        // create a new file with the same name in the same directory
+        if (orgExtension.equals("png")) {
+            convertToJPGImage(image, imageFile);
         }
+        minimizeJPGImage(image, imageFile, quality);
+    }
+
+    private static void minimizeJPGImage(Mat image, File imageFile, int quality) {
+        // write the image data to the new file with the quality
+        // Ensuring no data loss on unexpected quit
+        String fileName = imageFile.getName();
+        File tempImageFile = new File(imageFile.getParent(), fileName + ".tmp");
+        if (tempImageFile.exists()) {
+            while (!tempImageFile.delete()) ;
+        }
+        if (opencv_imgcodecs.imwrite(tempImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
+            //Successfully applied quality to JPG
+            //Overwrite Orginal with tmp
+            while (!imageFile.delete()) ;
+            tempImageFile.renameTo(imageFile);
+        } else {
+            //Failed to apply quality
+            //Delete fragment
+            if (tempImageFile.exists()) {
+                while (!tempImageFile.delete()) ;
+            }
+        }
+    }
+
+    private static void convertToJPGImage(Mat image, File imageFile) {
+        String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
+        File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
+        // write the image data to the new file with the quality
+        if (opencv_imgcodecs.imwrite(newImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY})) {
+            //Successfully created JPG
+            //Delete the original file
+            if (imageFile.exists()) {
+                while (!imageFile.delete()) ;
+            }
+        } else {
+            //Failed to create JPG
+            //Delete JPG fragment
+            if (newImageFile.exists()) {
+                while (!newImageFile.delete()) ;
+            }
+        }
+
     }
 }

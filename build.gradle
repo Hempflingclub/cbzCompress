@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 sourceCompatibility = 17
 targetCompatibility = 17
@@ -20,7 +21,14 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.tukaani:xz:1.9' // Dependency for commons-compress
-    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.8'
+    implementation 'org.bytedeco:javacv-platform:1.5.8'  // Not completely needed, instead just importing opencv components
+    //implementation 'org.bytedeco:opencv-platform:4.5.5-1.5.7'
+}
+shadowJar {
+    minimize()
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
 }
 publishing {
     publications {
