@@ -4,17 +4,6 @@ import cbzCompress.Utils.CbzUtil;
 
 public class Main {
     public static void main(String[] args) {
-        //Run CbzUtil for all files in x Folder, and rerun every 30mins with rescanning the folder
-
-        //Tested:
-        /*
-        Image Compression (Conversion Png-JPG) works flawlessly now
-        Compression of Folder into .cbz works
-        Extraction function
-        Image Compression, in function followed with Compression
-        Completed System
-        .jar arguments, to define the baseFolders, without recompiling
-         */
         if (args.length != 5) {
             System.out.println("Provide 5 Arguments:");
             System.out.println("{1} Path to inputFolder");
