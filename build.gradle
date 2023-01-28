@@ -25,7 +25,6 @@ dependencies {
     //implementation 'org.bytedeco:opencv-platform:4.5.5-1.5.7'
 }
 shadowJar {
-    minimize()
     manifest {
         attributes 'Main-Class': mainClassName
     }

@@ -134,12 +134,12 @@ abstract class SevenZUtil { //package-private
 
     protected static String getPureFileName(File file) {
         String fileName = file.getName();
-        return getFileExtension(fileName);
+        return getPureFileName(fileName);
     }
 
     protected static String getPureFileName(String fileName) {
-        String fileExtension = fileName.substring(0, fileName.lastIndexOf("."));
-        return fileExtension;
+        String pureFileName = fileName.substring(0, fileName.lastIndexOf("."));
+        return pureFileName;
     }
 
     private static boolean deleteDirectory(File directoryToBeDeleted) {

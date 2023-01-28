@@ -19,6 +19,10 @@ abstract class ImageUtil { //package-private
         if (orgExtension.equals("png")) {
             convertToJPGImage(image, imageFile);
         }
+        //Overwriting Image data, so ensuring after png -> jpg conversion no confusions and reconversions to png happen
+        String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
+        imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
+        image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
         minimizeJPGImage(image, imageFile, quality);
     }
 
@@ -26,7 +30,7 @@ abstract class ImageUtil { //package-private
         // write the image data to the new file with the quality
         // Ensuring no data loss on unexpected quit
         String fileName = imageFile.getName();
-        File tempImageFile = new File(imageFile.getParent(), fileName + ".tmp");
+        File tempImageFile = new File(imageFile.getParent(), fileName + ".tmp.jpg");
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
@@ -48,7 +52,7 @@ abstract class ImageUtil { //package-private
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        if (opencv_imgcodecs.imwrite(newImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY})) {
+        if (opencv_imgcodecs.imwrite(newImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
             //Successfully created JPG
             //Delete the original file
             if (imageFile.exists()) {
