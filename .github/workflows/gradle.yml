@@ -1,0 +1,41 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java build and Artifact Upload
+
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron: "15 6 1 * *"
+permissions:
+  contents: read
+
+jobs:
+  build-with-Artifact:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.5.1
+      with:
+        java-version: 17
+        distribution: 'temurin'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+        #cache-disabled: true  // For Self-hosted
+        #gradle-home-cache-cleanup: true // For Self-hosted
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        path: build/libs/*.jar
+    #- name: Clean Workspace //For Selfhosted
+    #  run: rm -rf ./* //For Selfhosted
