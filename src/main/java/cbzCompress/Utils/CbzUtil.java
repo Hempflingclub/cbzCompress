@@ -13,7 +13,6 @@ import static java.lang.Thread.sleep;
 abstract public class CbzUtil {
     //Use Utils to solve Minimize CBZ Size, by recompressing after lowering Image Quality to 70
     protected static final int quality = 70;
-    protected static final int waitMinutes = 30;
 
     private static void compressImagesInFolder(Path targetFolder) {
         File targetFolderFile = targetFolder.toFile();
@@ -34,8 +33,8 @@ abstract public class CbzUtil {
         }
     }
 
-    public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder) {
-        wait(waitMinutes);
+    public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder, int waitingMinutes) {
+        wait(waitingMinutes);
         Path resultArchive = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder);
         if (resultArchive == null) {
             return false;
