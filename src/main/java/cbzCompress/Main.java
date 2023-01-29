@@ -24,7 +24,7 @@ public class Main {
             System.out.println("{5} was not a valid input, only whole numbers at or above 1 accepted, no decimals nor commas");
             System.exit(0);
         }
-        if (waitingMinutes <= 0) {
+        if (waitingMinutes < 0) {
             System.out.println("{5} was not a valid input, only whole numbers at or above 1 accepted, no decimals nor commas");
             System.exit(0);
         }

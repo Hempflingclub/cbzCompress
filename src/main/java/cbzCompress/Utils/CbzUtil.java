@@ -24,10 +24,11 @@ abstract public class CbzUtil {
     }
 
     private static void wait(int minutes) {
+        int minimumSleepMs = 5 * 1000;
         int seconds = minutes * 60;
         int ms = seconds * 1000;
         try {
-            sleep(ms);
+            sleep(Math.max(ms, minimumSleepMs));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
