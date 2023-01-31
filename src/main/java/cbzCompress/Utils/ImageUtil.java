@@ -16,6 +16,10 @@ abstract class ImageUtil { //package-private
         // get the file name without the extension
         String orgExtension = SevenZUtil.getFileExtension(imageFile);
         // create a new file with the same name in the same directory
+        if (orgExtension.equals("gif")) {
+            //Don't handle gif, just leave it as is
+            return;
+        }
         if (orgExtension.equals("png")) {
             convertToJPGImage(image, imageFile);
         }
