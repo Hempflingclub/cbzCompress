@@ -92,11 +92,17 @@ abstract public class CbzUtil {
     private static Path[] extractFirstArchiveInTarget(String targetArchiveFolder, String destFolder) {
         Path targetArchiveFolderPath = Path.of(targetArchiveFolder);
         File targetArchiveFolderFile = targetArchiveFolderPath.toFile();
-        if (Objects.requireNonNull(targetArchiveFolderFile.listFiles()).length > 0) {
-            File firstFile = Objects.requireNonNull(targetArchiveFolderFile.listFiles())[0];
-            Path orginalArchive = firstFile.toPath();
-            Path extractedFolder = SevenZUtil.extract7zArchive(firstFile.getPath(), destFolder);
-            return new Path[]{orginalArchive, extractedFolder};
+        if (targetArchiveFolderFile.listFiles() != null) {
+            for (File targetFile : Objects.requireNonNull(targetArchiveFolderFile.listFiles())) {
+                if (targetFile.isDirectory()) {
+                    //Cannot be an archive
+                    //No further differentiation based on file extension, to avoid custom solutions failing
+                    continue;
+                }
+                Path orginalArchive = targetFile.toPath();
+                Path extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
+                return new Path[]{orginalArchive, extractedFolder};
+            }
         }
         return null;
     }
