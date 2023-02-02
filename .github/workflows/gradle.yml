@@ -47,6 +47,6 @@ jobs:
     #  with:
     #    path: build/libs/*.jar
     - name: Upload to Gofile # Avoiding File Limits of Github
-      run: wget https://raw.githubusercontent.com/Sushrut1101/GoFile-Upload/master/upload.sh upload.sh && ./upload.sh build/libs/build.zip
+      run: wget https://raw.githubusercontent.com/Sushrut1101/GoFile-Upload/master/upload.sh && ./upload.sh build/libs/build.zip
     - name: Clean Workspace #For Selfhosted
       run: rm -rf ./* #For Selfhosted
