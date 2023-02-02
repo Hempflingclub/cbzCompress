@@ -39,7 +39,7 @@ jobs:
       uses: vimtor/action-zip@v1.1
       with:
         # Files or directories to zip
-        files: build/libs/*.jar
+        files: build/libs/
         # Name of output zip file
         dest: build/libs/build.zip
     #- name: Upload Build Artifact
