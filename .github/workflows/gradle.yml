@@ -51,3 +51,5 @@ jobs:
       shell: bash
     - name: Clean Workspace
       run: rm -rf ./*
+    - name: Delete Branch Cache Action
+      uses: snnaplab/delete-branch-cache-action@v1.0.0
