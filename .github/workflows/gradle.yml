@@ -31,8 +31,8 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
-        #cache-disabled: true  // For Self-hosted
-        #gradle-home-cache-cleanup: true // For Self-hosted
+        cache-disabled: true
+        gradle-home-cache-cleanup: true
     - name: Easy Zip Files
       # You may pin to the exact commit or the version.
       # uses: vimtor/action-zip@26a249fb00d43ca98dad77a4b3838025fc226aa1
@@ -41,12 +41,13 @@ jobs:
         # Files or directories to zip
         files: build/libs/*.jar
         # Name of output zip file
-        dest: buils/libs/build.zip
+        dest: build/libs/build.zip
     #- name: Upload Build Artifact
     #  uses: actions/upload-artifact@v3.1.0
     #  with:
     #    path: build/libs/*.jar
     - name: Upload to Gofile # Avoiding File Limits of Github
-      run: wget https://raw.githubusercontent.com/Sushrut1101/GoFile-Upload/master/upload.sh && ./upload.sh build/libs/build.zip
-    - name: Clean Workspace #For Selfhosted
-      run: rm -rf ./* #For Selfhosted
+      run:  ./.github/scripts/upload.sh build/libs/build.zip
+      shell: bash
+    - name: Clean Workspace
+      run: rm -rf ./*
