@@ -27,13 +27,13 @@ jobs:
       with:
         java-version: 17
         distribution: 'temurin'
-    - name: Build with Gradle
+    - name: Build
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
         cache-disabled: true
         gradle-home-cache-cleanup: true
-    - name: Easy Zip Files
+    - name: Zip Files
       # You may pin to the exact commit or the version.
       # uses: vimtor/action-zip@26a249fb00d43ca98dad77a4b3838025fc226aa1
       uses: vimtor/action-zip@v1.1
@@ -51,7 +51,7 @@ jobs:
       shell: bash
     - name: Clean Workspace
       run: rm -rf ./*
-    - name: Delete Branch Cache Action
+    - name: Delete Branch Cache
       uses: snnaplab/delete-branch-cache-action@v1.0.0
       with:
-        github-token: GITHUB_TOKEN
+        github-token: ${{ secrets.TOKEN }}
