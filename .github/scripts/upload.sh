@@ -19,4 +19,4 @@ LINK=$(echo $UPLOAD | jq -r '.data|.downloadPage')
 echo $LINK
 
 echo " "
-echo $LINK >'link.txt'
+echo $LINK >'link.md'
