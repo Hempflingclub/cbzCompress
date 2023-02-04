@@ -44,10 +44,6 @@ jobs:
     - name: Upload to Gofile # Avoiding File Limits of Github
       run:  ./.github/scripts/upload.sh build.7z
       shell: bash
-    - name: Adding Gofile Link to be shown
-      uses: x-color/github-actions-job-summary@v0.1.1
-      with:
-        file: 'link.md'
     - name: Clean Workspace
       run: rm -rf ./*
     - name: Delete Branch Cache
