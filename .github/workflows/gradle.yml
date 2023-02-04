@@ -47,7 +47,7 @@ jobs:
     - name: Adding Gofile Link to be shown
       uses: x-color/github-actions-job-summary@v0.1.1
       with:
-        paths: link
+        file: link
     - name: Clean Workspace
       run: rm -rf ./*
     - name: Delete Branch Cache
