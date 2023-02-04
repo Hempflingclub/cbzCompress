@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.bytedeco.gradle-javacpp-platform' version '1.5.8'
 }
 sourceCompatibility = 17
 targetCompatibility = 17
@@ -15,7 +16,9 @@ tasks.withType(JavaCompile) {
 repositories {
     mavenCentral()
 }
-
+ext {// sometimes used: linux-x86_64,windows-x86_64
+    javacppPlatform = 'linux-arm64' // defaults to Loader.getPlatform()
+}
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -39,4 +42,4 @@ publishing {
     }
 }
 group 'cbzCompress'
-version '1.0.3'
+version '1.0.4-arm64'
