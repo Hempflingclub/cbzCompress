@@ -33,7 +33,7 @@ jobs:
         arguments: build
         cache-disabled: true
         gradle-home-cache-cleanup: true
-    - name: 7z Build
+    - name: 7z Compression
       uses: edgarrc/action-7z@v1
       with:
         args: 7z a -t7z -mx=9 build.7z build/libs/*.jar
@@ -44,6 +44,11 @@ jobs:
     - name: Upload to Gofile # Avoiding File Limits of Github
       run:  ./.github/scripts/upload.sh build.7z
       shell: bash
+    - name: Adding Gofile Link to be shown
+      uses: test-summary/action@v2.1
+      with:
+        paths: link
+      if: always()
     - name: Clean Workspace
       run: rm -rf ./*
     - name: Delete Branch Cache
