@@ -3,5 +3,6 @@
 ## Optimization
 * Dynamic Compression, based on available RAM
 * Avoid Faulty Source Files ???
+* Ignore .tmp archives
 ## More Features
 * Support for gif compression
