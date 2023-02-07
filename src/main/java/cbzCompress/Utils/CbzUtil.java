@@ -94,9 +94,14 @@ abstract public class CbzUtil {
         File targetArchiveFolderFile = targetArchiveFolderPath.toFile();
         if (targetArchiveFolderFile.listFiles() != null) {
             for (File targetFile : Objects.requireNonNull(targetArchiveFolderFile.listFiles())) {
+                String archiveExtension = SevenZUtil.getFileExtension(targetArchiveFolderFile);
                 if (targetFile.isDirectory()) {
                     //Cannot be an archive
                     //No further differentiation based on file extension, to avoid custom solutions failing
+                    continue;
+                }
+                if(archiveExtension.equals("tmp")){
+                    //Ignoring .tmp Archives
                     continue;
                 }
                 Path orginalArchive = targetFile.toPath();
