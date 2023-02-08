@@ -5,4 +5,3 @@
 * Avoid Faulty Source Files ???
 ## More Features
 * Support for gif compression
-* Arm64 | Win64 | master as Dev Branch
