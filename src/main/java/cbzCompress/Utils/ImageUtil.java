@@ -71,4 +71,8 @@ abstract class ImageUtil { //package-private
         }
 
     }
+    private static void minimizeGifImage(File imageFile){
+        //org.bytedeco.ffmpeg
+        //Figure out and complete Gif handling in ffmpeg package
+    }
 }

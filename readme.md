@@ -4,4 +4,4 @@
 * Dynamic Compression, based on available RAM
 * Avoid Faulty Source Files ???
 ## More Features
-* Support for gif compression
+* Support for gif compression via ffmpeg
