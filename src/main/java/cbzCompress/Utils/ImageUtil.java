@@ -1,9 +1,13 @@
 package cbzCompress.Utils;
 
+import org.bytedeco.ffmpeg.avutil.AVFrame;
+import org.bytedeco.ffmpeg.ffmpeg;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
+
+import static org.bytedeco.ffmpeg.global.avutil.av_frame_alloc;
 
 abstract class ImageUtil { //package-private
     protected static void convertAndSaveImage(File imageFile, int quality) {
@@ -71,8 +75,10 @@ abstract class ImageUtil { //package-private
         }
 
     }
-    private static void minimizeGifImage(File imageFile){
+
+    private static void minimizeGifImage(File imageFile) {
         //org.bytedeco.ffmpeg
         //Figure out and complete Gif handling in ffmpeg package
+        //https://github.com/bytedeco/javacpp-presets/tree/master/ffmpeg#the-readfewframejava-source-file
     }
 }
