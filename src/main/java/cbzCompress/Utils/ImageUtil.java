@@ -4,8 +4,6 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 
 abstract class ImageUtil { //package-private
@@ -41,9 +39,7 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        try {
-            URI filePathURI = new URI(("file:///" + tempImageFile.getAbsolutePath().replaceAll(" ", "%20")));
-            if (opencv_imgcodecs.imwrite(filePathURI.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
+            if (opencv_imgcodecs.imwrite(getEscapedFolderPaths(tempImageFile.getAbsolutePath()), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
                 //Successfully applied quality to JPG
                 //Overwrite Orginal with tmp
                 while (!imageFile.delete()) ;
@@ -55,19 +51,13 @@ abstract class ImageUtil { //package-private
                     while (!tempImageFile.delete()) ;
                 }
             }
-        } catch (URISyntaxException e) {
-            Logger.logException(e);
-            throw new RuntimeException(e);
-        }
     }
 
     private static void convertToJPGImage(Mat image, File imageFile) {
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        try {
-            URI filePathURI = new URI(("file:///" + newImageFile.getAbsolutePath().replaceAll(" ", "%20")));
-            if (opencv_imgcodecs.imwrite(filePathURI.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
+            if (opencv_imgcodecs.imwrite(getEscapedFolderPaths(newImageFile.getAbsolutePath()), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
                 //Successfully created JPG
                 //Delete the original file
                 if (imageFile.exists()) {
@@ -80,10 +70,10 @@ abstract class ImageUtil { //package-private
                     while (!newImageFile.delete()) ;
                 }
             }
-        } catch (URISyntaxException e) {
-            Logger.logException(e);
-            throw new RuntimeException(e);
-        }
+    }
+    private static String getEscapedFolderPaths(String unescapedPath){
+        String escapedPath = unescapedPath.replace("\\", "\\\\"); // Double Backslash equates one Backslash, so for 2, then 4 are needed
+        return escapedPath;
     }
 
     /*private static void minimizeGifImage(File imageFile) {
