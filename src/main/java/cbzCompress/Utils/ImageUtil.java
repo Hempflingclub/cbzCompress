@@ -39,7 +39,7 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        if (opencv_imgcodecs.imwrite(tempImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
+        if (opencv_imgcodecs.imwrite(tempImageFile.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
             //Successfully applied quality to JPG
             //Overwrite Orginal with tmp
             while (!imageFile.delete()) ;
@@ -57,7 +57,7 @@ abstract class ImageUtil { //package-private
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        if (opencv_imgcodecs.imwrite(newImageFile.getAbsolutePath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
+        if (opencv_imgcodecs.imwrite(newImageFile.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
             //Successfully created JPG
             //Delete the original file
             if (imageFile.exists()) {
