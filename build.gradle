@@ -42,4 +42,4 @@ publishing {
     }
 }
 group 'cbzCompress'
-version '1.0.12-win64'
+version '1.0.13-win64'
