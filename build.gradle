@@ -17,7 +17,7 @@ repositories {
     mavenCentral()
 }
 ext {// sometimes used: linux-x86_64,windows-x86_64
-    //javacppPlatform = '' // defaults to Loader.getPlatform()
+    javacppPlatform = 'windows-x86_64' // defaults to Loader.getPlatform()
 }
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -42,4 +42,4 @@ publishing {
     }
 }
 group 'cbzCompress'
-version '1.0.7'
+version '1.0.7-win64'
