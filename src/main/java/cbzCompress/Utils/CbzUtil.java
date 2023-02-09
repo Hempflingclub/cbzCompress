@@ -30,6 +30,7 @@ abstract public class CbzUtil {
             sleep(Math.max(ms, minimumSleepMs));
         } catch (InterruptedException e) {
             Logger.logException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -55,6 +56,7 @@ abstract public class CbzUtil {
         } catch (IOException e) {
             System.out.println("IOException during moving to finished folder");
             Logger.logException(e);
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -83,6 +85,7 @@ abstract public class CbzUtil {
             } catch (IOException e) {
                 constantDelete(extractedFolder);
                 Logger.logException(e);
+                throw new RuntimeException(e);
             }
         }
         return null;
