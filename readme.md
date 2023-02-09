@@ -6,3 +6,4 @@
 ## More Features
 * Support for gif compression via ffmpeg
 * Logging of Stacktrace
+* Fix too long Path situations
