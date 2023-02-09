@@ -81,7 +81,7 @@ abstract class SevenZUtil { //package-private
                 return extractZipArchive(filePath, destPath);
             } else {
                 System.out.println("IOException during archive opening");
-                ioException.printStackTrace();
+                Logger.logException(ioException);
             }
         }
         return null;
@@ -117,7 +117,7 @@ abstract class SevenZUtil { //package-private
             return outputFolderPath;
         } catch (IOException ioException) {
             System.out.println("IOException during archive opening");
-            ioException.printStackTrace();
+            Logger.logException(ioException);
         }
         return null;
     }
@@ -158,7 +158,7 @@ abstract class SevenZUtil { //package-private
             try {
                 sleep(1000);
             } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
+                Logger.logException(interruptedException);
             }
         }
     }
