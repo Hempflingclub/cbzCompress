@@ -14,8 +14,9 @@ public class Logger {
         LocalDateTime currentTime = LocalDateTime.now();
         String currentTimeFormatted = dateTimeFormatter.format(currentTime);
         try {
-            FileWriter FW = new FileWriter(logFile);
-            FW.append(currentTimeFormatted).append("| ").append(textLine).append(System.getProperty("line.separator"));
+            FileWriter fw = new FileWriter(logFile);
+            fw.write(currentTimeFormatted + "| " + textLine + System.getProperty("line.separator"));
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
