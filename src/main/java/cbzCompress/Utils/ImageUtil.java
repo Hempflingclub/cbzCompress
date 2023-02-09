@@ -4,6 +4,8 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 abstract class ImageUtil { //package-private
@@ -39,17 +41,23 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        if (opencv_imgcodecs.imwrite(tempImageFile.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
-            //Successfully applied quality to JPG
-            //Overwrite Orginal with tmp
-            while (!imageFile.delete()) ;
-            tempImageFile.renameTo(imageFile);
-        } else {
-            //Failed to apply quality
-            //Delete fragment
-            if (tempImageFile.exists()) {
-                while (!tempImageFile.delete()) ;
+        try {
+            URI filePathURI = new URI(("file:///" + tempImageFile.getAbsolutePath().replaceAll(" ", "%20")));
+            if (opencv_imgcodecs.imwrite(filePathURI.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
+                //Successfully applied quality to JPG
+                //Overwrite Orginal with tmp
+                while (!imageFile.delete()) ;
+                tempImageFile.renameTo(imageFile);
+            } else {
+                //Failed to apply quality
+                //Delete fragment
+                if (tempImageFile.exists()) {
+                    while (!tempImageFile.delete()) ;
+                }
             }
+        } catch (URISyntaxException e) {
+            Logger.logException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -57,20 +65,25 @@ abstract class ImageUtil { //package-private
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        if (opencv_imgcodecs.imwrite(newImageFile.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
-            //Successfully created JPG
-            //Delete the original file
-            if (imageFile.exists()) {
-                while (!imageFile.delete()) ;
+        try {
+            URI filePathURI = new URI(("file:///" + newImageFile.getAbsolutePath().replaceAll(" ", "%20")));
+            if (opencv_imgcodecs.imwrite(filePathURI.getPath(), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
+                //Successfully created JPG
+                //Delete the original file
+                if (imageFile.exists()) {
+                    while (!imageFile.delete()) ;
+                }
+            } else {
+                //Failed to create JPG
+                //Delete JPG fragment
+                if (newImageFile.exists()) {
+                    while (!newImageFile.delete()) ;
+                }
             }
-        } else {
-            //Failed to create JPG
-            //Delete JPG fragment
-            if (newImageFile.exists()) {
-                while (!newImageFile.delete()) ;
-            }
+        } catch (URISyntaxException e) {
+            Logger.logException(e);
+            throw new RuntimeException(e);
         }
-
     }
 
     /*private static void minimizeGifImage(File imageFile) {
