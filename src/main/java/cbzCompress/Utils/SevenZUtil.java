@@ -82,6 +82,7 @@ abstract class SevenZUtil { //package-private
             } else {
                 System.out.println("IOException during archive opening");
                 Logger.logException(ioException);
+                ioException.printStackTrace();
             }
         }
         return null;
@@ -118,6 +119,7 @@ abstract class SevenZUtil { //package-private
         } catch (IOException ioException) {
             System.out.println("IOException during archive opening");
             Logger.logException(ioException);
+            ioException.printStackTrace();
         }
         return null;
     }
@@ -159,6 +161,7 @@ abstract class SevenZUtil { //package-private
                 sleep(1000);
             } catch (InterruptedException interruptedException) {
                 Logger.logException(interruptedException);
+                interruptedException.printStackTrace();
             }
         }
     }
