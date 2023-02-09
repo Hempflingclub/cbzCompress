@@ -14,8 +14,7 @@ abstract public class CbzUtil {
     //Use Utils to solve Minimize CBZ Size, by recompressing after lowering Image Quality to 70
     protected static final int quality = 70;
 
-    private static void compressImagesInFolder(Path targetFolder) {
-        File targetFolderFile = targetFolder.toFile();
+    private static void compressImagesInFolder(File targetFolderFile) {
         File[] imageFiles = targetFolderFile.listFiles();
         assert imageFiles != null;
         for (File imageFile : imageFiles) {
@@ -70,26 +69,26 @@ abstract public class CbzUtil {
         tempFolderFile.mkdirs();
         destFolderFile.mkdirs();
 
-        Path[] extractionResult = extractFirstArchiveInTarget(targetArchiveFolder, tempFolder);
+        File[] extractionResult = extractFirstArchiveInTarget(targetArchiveFolder, tempFolder);
         if (extractionResult != null) {
-            Path orginalArchive = extractionResult[0];
-            Path extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
+            File orginalArchive = extractionResult[0];
+            File extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
             compressImagesInFolder(extractedFolder);
             try {
                 Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
                 //Delete temp folder, and original Archive
-                constantDelete(extractedFolder.toFile());
-                constantDelete(orginalArchive.toFile());
+                constantDelete(extractedFolder);
+                constantDelete(orginalArchive);
                 return resultArchive;
             } catch (IOException e) {
-                constantDelete(extractedFolder.toFile());
+                constantDelete(extractedFolder);
                 Logger.logException(e);
             }
         }
         return null;
     }
 
-    private static Path[] extractFirstArchiveInTarget(String targetArchiveFolder, String destFolder) {
+    private static File[] extractFirstArchiveInTarget(String targetArchiveFolder, String destFolder) {
         Path targetArchiveFolderPath = Path.of(targetArchiveFolder);
         File targetArchiveFolderFile = targetArchiveFolderPath.toFile();
         if (targetArchiveFolderFile.listFiles() != null) {
@@ -104,9 +103,9 @@ abstract public class CbzUtil {
                     //Ignoring .tmp Archives
                     continue;
                 }
-                Path orginalArchive = targetFile.toPath();
-                Path extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
-                return new Path[]{orginalArchive, extractedFolder};
+                File orginalArchive = targetFile;
+                File extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
+                return new File[]{orginalArchive, extractedFolder};
             }
         }
         return null;

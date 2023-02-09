@@ -46,7 +46,7 @@ abstract class SevenZUtil { //package-private
         }
     }
 
-    protected static Path extract7zArchive(String filePath, String destPath) {
+    protected static File extract7zArchive(String filePath, String destPath) {
         File targetArchive = new File(filePath);
         //Building Structure for Extracted Files
         String fileName = targetArchive.getName();
@@ -73,7 +73,7 @@ abstract class SevenZUtil { //package-private
                 }
             }
             archive.close();
-            return outputFolderPath;
+            return outputFolder;
         } catch (IOException ioException) {
             if (ioException.fillInStackTrace().getMessage().equals("Bad 7z signature")) {
                 //Probably not 7z but zip
@@ -87,7 +87,7 @@ abstract class SevenZUtil { //package-private
         return null;
     }
 
-    private static Path extractZipArchive(String filePath, String destPath) {
+    private static File extractZipArchive(String filePath, String destPath) {
         File targetArchive = new File(filePath);
         //Building Structure for Extracted Files
         String fileName = targetArchive.getName();
@@ -114,7 +114,7 @@ abstract class SevenZUtil { //package-private
                 }
             }
             archive.close();
-            return outputFolderPath;
+            return outputFolder;
         } catch (IOException ioException) {
             System.out.println("IOException during archive opening");
             Logger.logException(ioException);
