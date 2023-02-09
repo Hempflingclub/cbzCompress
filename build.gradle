@@ -42,4 +42,4 @@ publishing {
     }
 }
 group 'cbzCompress'
-version '1.0.9-arm64'
+version '1.0.10-arm64'
