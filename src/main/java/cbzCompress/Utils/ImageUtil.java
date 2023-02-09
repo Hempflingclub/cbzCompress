@@ -72,8 +72,8 @@ abstract class ImageUtil { //package-private
             }
     }
     private static String getEscapedFolderPaths(String unescapedPath){
-        //String escapedPath = unescapedPath.replace("\\", "\\\\"); // Double Backslash equates one Backslash, so for 2, then 4 are needed
-        String cPlusPlusReadableShenanz = unescapedPath.replace(" ", "\\ ");
+        String escapedPath = unescapedPath.replace("\\", "\\\\"); // Double Backslash equates one Backslash, so for 2, then 4 are needed
+        String cPlusPlusReadableShenanz = escapedPath.replace(" ", "\\ ");
         return cPlusPlusReadableShenanz;
     }
 
