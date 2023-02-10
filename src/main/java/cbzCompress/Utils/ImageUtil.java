@@ -4,7 +4,6 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
-import java.io.IOException;
 
 
 abstract class ImageUtil { //package-private
@@ -90,13 +89,8 @@ abstract class ImageUtil { //package-private
     }
 
     private static String getPath(File file) {
-        try {
-            String filename = file.getCanonicalPath();
-            return filename;
-        } catch (IOException e) {
-            Logger.logException(e);
-            throw new RuntimeException(e);
-        }
+        String filePath = file.getAbsolutePath();
+        return "\"" + filePath.replace("\\", "\\\\").replace("/", "\\/") + "\"";
     }
 
     /*private static void minimizeGifImage(File imageFile) {
