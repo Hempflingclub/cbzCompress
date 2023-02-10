@@ -39,44 +39,57 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-            if (opencv_imgcodecs.imwrite(getEscapedFolderPaths(tempImageFile.getAbsolutePath()), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality})) {
-                //Successfully applied quality to JPG
-                //Overwrite Orginal with tmp
-                while (!imageFile.delete()) ;
-                tempImageFile.renameTo(imageFile);
-            } else {
-                //Failed to apply quality
-                //Delete fragment
-                if (tempImageFile.exists()) {
-                    while (!tempImageFile.delete()) ;
-                }
+        if (compressJPG(getEscapedFolderPaths(tempImageFile.getAbsolutePath()), image, quality)) {
+            //Successfully applied quality to JPG
+            //Overwrite Orginal with tmp
+            while (!imageFile.delete()) ;
+            tempImageFile.renameTo(imageFile);
+        } else {
+            //Failed to apply quality
+            //Delete fragment
+            if (tempImageFile.exists()) {
+                while (!tempImageFile.delete()) ;
             }
+        }
     }
 
     private static void convertToJPGImage(Mat image, File imageFile) {
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-            if (opencv_imgcodecs.imwrite(getEscapedFolderPaths(newImageFile.getAbsolutePath()), image, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1})) {
-                //Successfully created JPG
-                //Delete the original file
-                if (imageFile.exists()) {
-                    while (!imageFile.delete()) ;
-                }
-            } else {
-                //Failed to create JPG
-                //Delete JPG fragment
-                if (newImageFile.exists()) {
-                    while (!newImageFile.delete()) ;
-                }
+        if (convertToJPG(getEscapedFolderPaths(newImageFile.getAbsolutePath()), image)) {
+            //Successfully created JPG
+            //Delete the original file
+            if (imageFile.exists()) {
+                while (!imageFile.delete()) ;
             }
+        } else {
+            //Failed to create JPG
+            //Delete JPG fragment
+            if (newImageFile.exists()) {
+                while (!newImageFile.delete()) ;
+            }
+        }
     }
-    private static String getEscapedFolderPaths(String unescapedPath){
-        System.out.println("Unescaped Path: "+unescapedPath);
+
+    private static boolean compressJPG(String filename, Mat imageMat, int quality) {
+        return makeImage(getEscapedFolderPaths(filename), imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
+    }
+
+    private static boolean convertToJPG(String filename, Mat imageMat) {
+        return makeImage(getEscapedFolderPaths(filename), imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
+    }
+
+    private static boolean makeImage(String filename, Mat imageMat, int[] imageOptions) {
+        return opencv_imgcodecs.imwrite(filename, imageMat, imageOptions);
+    }
+
+    private static String getEscapedFolderPaths(String unescapedPath) {
+        System.out.println("Unescaped Path: " + unescapedPath);
         String escapedPath = unescapedPath.replace("\\", "\\\\"); // Double Backslash equates one Backslash, so for 2, then 4 are needed
-        System.out.println("Escaped Path: "+escapedPath);
+        System.out.println("Escaped Path: " + escapedPath);
         String cPlusPlusReadableShenanz = escapedPath.replace(" ", "\\ ");
-        System.out.println("Final Path: "+cPlusPlusReadableShenanz);
+        System.out.println("Final Path: " + cPlusPlusReadableShenanz);
         return cPlusPlusReadableShenanz;
     }
 
