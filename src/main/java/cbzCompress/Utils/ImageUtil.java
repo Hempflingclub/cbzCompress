@@ -90,7 +90,7 @@ abstract class ImageUtil { //package-private
 
     private static String getPath(File file) {
         String filePath = file.getAbsolutePath();
-        return "\"" + filePath.replace("\\", "\\\\").replace("/", "\\/") + "\"";
+        return filePath.replace("\\", "\\\\").replace("/", "\\/");
     }
 
     /*private static void minimizeGifImage(File imageFile) {
