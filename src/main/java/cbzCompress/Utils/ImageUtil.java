@@ -39,7 +39,7 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        if (compressJPG(getEscapedFolderPaths(tempImageFile.getAbsolutePath()), image, quality)) {
+        if (compressJPG(tempImageFile.getAbsolutePath(), image, quality)) {
             //Successfully applied quality to JPG
             //Overwrite Orginal with tmp
             while (!imageFile.delete()) ;
@@ -57,7 +57,7 @@ abstract class ImageUtil { //package-private
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        if (convertToJPG(getEscapedFolderPaths(newImageFile.getAbsolutePath()), image)) {
+        if (convertToJPG(newImageFile.getAbsolutePath(), image)) {
             //Successfully created JPG
             //Delete the original file
             if (imageFile.exists()) {
@@ -73,24 +73,16 @@ abstract class ImageUtil { //package-private
     }
 
     private static boolean compressJPG(String filename, Mat imageMat, int quality) {
-        return makeImage(getEscapedFolderPaths(filename), imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
+        return makeImage(filename, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
     }
 
     private static boolean convertToJPG(String filename, Mat imageMat) {
-        return makeImage(getEscapedFolderPaths(filename), imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
+        return makeImage(filename, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
     }
 
     private static boolean makeImage(String filename, Mat imageMat, int[] imageOptions) {
-        return opencv_imgcodecs.imwrite(filename, imageMat, imageOptions);
-    }
-
-    private static String getEscapedFolderPaths(String unescapedPath) {
-        System.out.println("Unescaped Path: " + unescapedPath);
-        String escapedPath = unescapedPath.replace("\\", "\\\\"); // Double Backslash equates one Backslash, so for 2, then 4 are needed
-        System.out.println("Escaped Path: " + escapedPath);
-        String cPlusPlusReadableShenanz = escapedPath.replace(" ", "\\ ");
-        System.out.println("Final Path: " + cPlusPlusReadableShenanz);
-        return cPlusPlusReadableShenanz;
+        String extraEscapedFilename = "\\\"" +filename+ "\\\"";
+        return opencv_imgcodecs.imwrite(extraEscapedFilename, imageMat, imageOptions);
     }
 
     /*private static void minimizeGifImage(File imageFile) {
