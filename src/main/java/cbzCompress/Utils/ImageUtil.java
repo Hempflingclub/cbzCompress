@@ -4,6 +4,7 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.io.File;
+import java.io.IOException;
 
 
 abstract class ImageUtil { //package-private
@@ -81,15 +82,21 @@ abstract class ImageUtil { //package-private
     }
 
     private static boolean makeImage(File file, Mat imageMat, int[] imageOptions) {
-        String filename = file.toPath().toString();
-        String extraEscapedFilename = '"' + filename + '"';
-        return opencv_imgcodecs.imwrite(extraEscapedFilename, imageMat, imageOptions);
+        return opencv_imgcodecs.imwrite(getPath(file), imageMat, imageOptions);
     }
 
     private static Mat getMat(File imageFile) {
-        String filename = imageFile.toPath().toString();
-        String extraEscapedFilename = '"' + filename + '"';
-        return opencv_imgcodecs.imread(extraEscapedFilename, opencv_imgcodecs.IMREAD_UNCHANGED);
+        return opencv_imgcodecs.imread(getPath(imageFile), opencv_imgcodecs.IMREAD_UNCHANGED);
+    }
+
+    private static String getPath(File file) {
+        try {
+            String filename = file.getCanonicalPath();
+            return filename;
+        } catch (IOException e) {
+            Logger.logException(e);
+            throw new RuntimeException(e);
+        }
     }
 
     /*private static void minimizeGifImage(File imageFile) {
