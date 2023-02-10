@@ -82,7 +82,7 @@ abstract class ImageUtil { //package-private
 
     private static boolean makeImage(String filename, Mat imageMat, int[] imageOptions) {
         String extraEscapedFilename = '"' + filename + '"';
-        extraEscapedFilename = extraEscapedFilename.replace("\\", "\\\\");
+        extraEscapedFilename = extraEscapedFilename.replace(File.separator, File.separator + File.separator);
         return opencv_imgcodecs.imwrite(extraEscapedFilename, imageMat, imageOptions);
     }
 
