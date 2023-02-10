@@ -39,7 +39,7 @@ abstract class ImageUtil { //package-private
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        if (compressJPG(tempImageFile.getAbsolutePath(), image, quality)) {
+        if (compressJPG(tempImageFile, image, quality)) {
             //Successfully applied quality to JPG
             //Overwrite Orginal with tmp
             while (!imageFile.delete()) ;
@@ -57,7 +57,7 @@ abstract class ImageUtil { //package-private
         String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
         File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
         // write the image data to the new file with the quality
-        if (convertToJPG(newImageFile.getAbsolutePath(), image)) {
+        if (convertToJPG(newImageFile, image)) {
             //Successfully created JPG
             //Delete the original file
             if (imageFile.exists()) {
@@ -72,17 +72,17 @@ abstract class ImageUtil { //package-private
         }
     }
 
-    private static boolean compressJPG(String filename, Mat imageMat, int quality) {
-        return makeImage(filename, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
+    private static boolean compressJPG(File file, Mat imageMat, int quality) {
+        return makeImage(file, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
     }
 
-    private static boolean convertToJPG(String filename, Mat imageMat) {
-        return makeImage(filename, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
+    private static boolean convertToJPG(File file, Mat imageMat) {
+        return makeImage(file, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
     }
 
-    private static boolean makeImage(String filename, Mat imageMat, int[] imageOptions) {
+    private static boolean makeImage(File file, Mat imageMat, int[] imageOptions) {
+        String filename = file.toPath().toString();
         String extraEscapedFilename = '"' + filename + '"';
-        extraEscapedFilename = extraEscapedFilename.replace(File.separator, File.separator + File.separator);
         return opencv_imgcodecs.imwrite(extraEscapedFilename, imageMat, imageOptions);
     }
 
