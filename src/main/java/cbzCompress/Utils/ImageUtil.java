@@ -13,7 +13,7 @@ abstract class ImageUtil { //package-private
 
     private static void convertAndAdjustQuality(File imageFile, int quality) {
         // read the image file
-        Mat image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
+        Mat image = getMat(imageFile);
         // get the file name without the extension
         String orgExtension = SevenZUtil.getFileExtension(imageFile);
         // create a new file with the same name in the same directory
@@ -27,7 +27,7 @@ abstract class ImageUtil { //package-private
         //Overwriting Image data, so ensuring after png -> jpg conversion no confusions and reconversions to png happen
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
-        image = opencv_imgcodecs.imread(imageFile.getAbsolutePath(), opencv_imgcodecs.IMREAD_UNCHANGED);
+        image = getMat(imageFile);
         minimizeJPGImage(image, imageFile, quality);
     }
 
@@ -84,6 +84,12 @@ abstract class ImageUtil { //package-private
         String filename = file.toPath().toString();
         String extraEscapedFilename = '"' + filename + '"';
         return opencv_imgcodecs.imwrite(extraEscapedFilename, imageMat, imageOptions);
+    }
+
+    private static Mat getMat(File imageFile) {
+        String filename = imageFile.toPath().toString();
+        String extraEscapedFilename = '"' + filename + '"';
+        return opencv_imgcodecs.imread(extraEscapedFilename, opencv_imgcodecs.IMREAD_UNCHANGED);
     }
 
     /*private static void minimizeGifImage(File imageFile) {
