@@ -30,6 +30,7 @@ abstract class ImageUtil { //package-private
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
         imageMat = getMat(imageFile);
+        while (!imageFile.exists()) ; //Busy waiting until FileSystem finished writing file
         minimizeJPGImage(imageMat, imageFile, quality);
     }
 
