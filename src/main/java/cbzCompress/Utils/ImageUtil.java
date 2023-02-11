@@ -1,5 +1,7 @@
 package cbzCompress.Utils;
 
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
@@ -13,7 +15,7 @@ abstract class ImageUtil { //package-private
 
     private static void convertAndAdjustQuality(File imageFile, int quality) {
         // read the image file
-        Mat image = getMat(imageFile);
+        Mat imageMat = getMat(imageFile);
         // get the file name without the extension
         String orgExtension = SevenZUtil.getFileExtension(imageFile);
         // create a new file with the same name in the same directory
@@ -22,28 +24,29 @@ abstract class ImageUtil { //package-private
             return;
         }
         if (orgExtension.equals("png")) {
-            convertToJPGImage(image, imageFile);
+            convertToJPGImage(imageMat, imageFile);
         }
         //Overwriting Image data, so ensuring after png -> jpg conversion no confusions and reconversions to png happen
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
-        image = getMat(imageFile);
-        minimizeJPGImage(image, imageFile, quality);
+        imageMat = getMat(imageFile);
+        minimizeJPGImage(imageMat, imageFile, quality);
     }
 
-    private static void minimizeJPGImage(Mat image, File imageFile, int quality) {
+    private static void minimizeJPGImage(Mat imageMat, File imageFile, int quality) {
         // write the image data to the new file with the quality
         // Ensuring no data loss on unexpected quit
-        String fileName = imageFile.getName();
-        File tempImageFile = new File(imageFile.getParent(), fileName + ".tmp.jpg");
+        String fileName = SevenZUtil.getPureFileName(imageFile);
+        String newExtension = "tmp.jpg";
+        File tempImageFile = new File(imageFile.getParent(), fileName + "." + newExtension);
         if (tempImageFile.exists()) {
             while (!tempImageFile.delete()) ;
         }
-        if (compressJPG(tempImageFile, image, quality)) {
+        if (compressJPG(newExtension, imageFile, imageMat, quality)) {
             //Successfully applied quality to JPG
             //Overwrite Orginal with tmp
             while (!imageFile.delete()) ;
-            tempImageFile.renameTo(imageFile);
+            while (!tempImageFile.renameTo(imageFile)) ;
         } else {
             //Failed to apply quality
             //Delete fragment
@@ -53,11 +56,12 @@ abstract class ImageUtil { //package-private
         }
     }
 
-    private static void convertToJPGImage(Mat image, File imageFile) {
-        String pureFileName = imageFile.getName().substring(0, imageFile.getName().lastIndexOf("."));
-        File newImageFile = new File(imageFile.getParent(), pureFileName + ".jpg");
+    private static void convertToJPGImage(Mat imageMat, File imageFile) {
+        String pureFileName = SevenZUtil.getPureFileName(imageFile);
+        String newExtension = "jpg";
+        File newImageFile = new File(imageFile.getParent(), pureFileName + "." + newExtension);
         // write the image data to the new file with the quality
-        if (convertToJPG(newImageFile, image)) {
+        if (convertToJPG(newExtension, imageFile, imageMat)) {
             //Successfully created JPG
             //Delete the original file
             if (imageFile.exists()) {
@@ -72,25 +76,40 @@ abstract class ImageUtil { //package-private
         }
     }
 
-    private static boolean compressJPG(File file, Mat imageMat, int quality) {
-        return makeImage(file, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
+    private static boolean compressJPG(String newExtension, File originalImageFile, Mat imageMat, int quality) {
+        return makeImage(newExtension, originalImageFile, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_QUALITY, quality});
     }
 
-    private static boolean convertToJPG(File file, Mat imageMat) {
-        return makeImage(file, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
+    private static boolean convertToJPG(String newExtension, File orignalImageFile, Mat imageMat) {
+        return makeImage(newExtension, orignalImageFile, imageMat, new int[]{opencv_imgcodecs.IMWRITE_JPEG_OPTIMIZE, 1});
     }
 
-    private static boolean makeImage(File file, Mat imageMat, int[] imageOptions) {
-        return opencv_imgcodecs.imwrite(getPath(file), imageMat, imageOptions);
+    private static boolean makeImage(String newExtension, File originalImageFile, Mat imageMat, int[] imageOptions) {
+        String originalImageFilePath = getPath(originalImageFile);
+        //Replacing Extension, to ensure Short Paths of Windows work
+        String orgExtension = SevenZUtil.getFileExtension(originalImageFile);
+        int extensionIndex = originalImageFilePath.lastIndexOf(orgExtension);
+        String finalImagePath = originalImageFilePath.substring(0, extensionIndex) + newExtension;
+        return opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
     }
 
     private static Mat getMat(File imageFile) {
-        return opencv_imgcodecs.imread(getPath(imageFile), opencv_imgcodecs.IMREAD_UNCHANGED);
+        String filePath = getPath(imageFile);
+        return opencv_imgcodecs.imread(filePath, opencv_imgcodecs.IMREAD_UNCHANGED);
     }
 
     private static String getPath(File file) {
-        String filePath = file.getAbsolutePath();
-        return filePath.replace("\\", "\\\\").replace("/", "\\/");
+        String filePath;
+        if (Platform.isWindows()) {
+            String longPath = "\\\\?\\" + file.getAbsolutePath();
+            int bufferSize = com.sun.jna.platform.win32.Kernel32.INSTANCE.GetShortPathName(longPath, null, 0);
+            char[] result = new char[bufferSize];
+            com.sun.jna.platform.win32.Kernel32.INSTANCE.GetShortPathName(longPath, result, result.length);
+            filePath = Native.toString(result); // making shortPath's using ~1 (like dir /X) does
+        } else {
+            filePath = file.getAbsolutePath();
+        }
+        return filePath;
     }
 
     /*private static void minimizeGifImage(File imageFile) {
