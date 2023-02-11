@@ -5,4 +5,3 @@
 * Avoid Faulty Source Files ???
 ## More Features
 * Support for gif compression via ffmpeg
-* Fix too long Path situations ♿♿♿ Maybe
