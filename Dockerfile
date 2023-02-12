@@ -4,8 +4,8 @@ ARG PAT
 ARG BRANCH_NAME
 # Set the working directory in the container to /app
 WORKDIR /app
-RUN sudo apt-get update
-RUN sudo apt-get install git openjdk-17-jdk-headless -y
+RUN apt-get update
+RUN apt-get install git openjdk-17-jdk-headless -y
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME .
 
