@@ -4,7 +4,7 @@ ARG PAT
 ARG BRANCH_NAME
 # Set the working directory in the container to /app
 WORKDIR /app
-RUN apt-get update && apt-get install -y git
+RUN sudo apt-get update && sudo apt-get install -y git
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME .
 
