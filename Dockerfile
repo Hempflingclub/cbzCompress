@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apt-get update
 RUN apt-get install git openjdk-17-jdk-headless -y
 # Clone the private Github repository using a personal access token (PAT)
-RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME .
+RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
 # Compile the Java project
 RUN ./cbzCompress/gradlew build
