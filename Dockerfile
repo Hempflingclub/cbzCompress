@@ -12,7 +12,7 @@ RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BR
 RUN ./cbzCompress/gradlew build
 
 # Copy the .jar file from the build directory to the working directory
-RUN cp ./cbzCompress/build/libs/cbzCompress-1.1.1-all.jar ./cbzCompress.jar #cbzCompress-1.1.1-arm64-all.jar for branch specific for instance
+RUN cp ./cbzCompress/build/libs/cbzCompress-1.1.1-arm64-all.jar ./cbzCompress.jar #cbzCompress-1.1.1-arm64-all.jar for branch specific for instance
 
 # Remove the build directory and other files to keep the image small
 RUN rm -rf cbzCompress
