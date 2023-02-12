@@ -1,5 +1,5 @@
 # Use an openjdk image as the base image
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17-ubi9-minimal
 ARG PAT
 ARG BRANCH_NAME
 # Set the working directory in the container to /app
