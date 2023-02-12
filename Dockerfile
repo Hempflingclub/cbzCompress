@@ -10,8 +10,9 @@ RUN apt-get install git openjdk-17-jdk-headless -y
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
 # Compile the Java project
-RUN ./cbzCompress/gradlew build
-
+WORKDIR ./cbzCompress
+RUN ./gradlew build
+WORKDIR ../
 # Copy the .jar file from the build directory to the working directory
 RUN cp ./cbzCompress/build/libs/cbzCompress-1.1.1-all.jar ./cbzCompress.jar #cbzCompress-1.1.1-arm64-all.jar for branch specific for instance
 
