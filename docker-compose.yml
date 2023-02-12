@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  my-java-app:
+    build:
+      context: https://${PAT}@github.com/Hempflingclub/cbzCompress.git
+      args:
+        PAT: ${PAT} # specify in .env File
+        ref: ${BRANCH_NAME} # specify in .env File
+    volumes:
+      - ${INPUT_FOLDER}:/app/in
+      - ${OUTPUT_FOLDER}:/app/out
