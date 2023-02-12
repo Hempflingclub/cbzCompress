@@ -1,10 +1,10 @@
 # Use an openjdk image as the base image
-FROM eclipse-temurin:17-ubi9-minimal
+FROM ubuntu:latest
 ARG PAT
 ARG BRANCH_NAME
 # Set the working directory in the container to /app
 WORKDIR /app
-RUN sudo apt-get update && sudo apt-get install -y git
+RUN sudo apt-get update && sudo apt-get install -y git openjdk-17-jdk-headless
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME .
 
