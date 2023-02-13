@@ -20,4 +20,4 @@ RUN mv /app/cbzCompress/build/libs/cbzCompress-*-all.jar /app/cbzCompress.jar
 RUN rm -rf cbzCompress
 
 # Run the .jar file when the container starts
-CMD ["java", "-jar", "cbzCompress.jar","in","tmp","tmpOut","out","15"]
+CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","15"]
