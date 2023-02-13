@@ -14,7 +14,7 @@ WORKDIR /app/cbzCompress
 RUN ./gradlew build
 WORKDIR /app
 # Copy the .jar file from the build directory to the working directory
-RUN sudo cp /app/cbzCompress/build/libs/cbzCompress-1.1.2-all.jar /app/cbzCompress.jar
+RUN mv /app/cbzCompress/build/libs/cbzCompress-1.1.2-all.jar /app/cbzCompress.jar
 
 # Remove the build directory and other files to keep the image small
 RUN rm -rf cbzCompress
