@@ -3,6 +3,5 @@
 ## Optimization
 * Dynamic Compression, based on available RAM
 * Optimize Docker, so Image isn't 1.2GB big, but instead all build dependencies are **Fully** deleted when done
-* More Print Feedback, regarding Status, with Timestamps
 ## More Features
 * Support for gif compression via ffmpeg
