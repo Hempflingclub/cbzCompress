@@ -2,6 +2,8 @@
 FROM ubuntu:latest
 ARG PAT
 ARG BRANCH_NAME
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-*/
+ENV PATH "$JAVA_HOME/bin:$PATH"
 # Set the working directory in the container to /app
 WORKDIR /app
 RUN apt-get update
