@@ -18,6 +18,8 @@ RUN mv /app/cbzCompress/build/libs/cbzCompress-*-all.jar /app/cbzCompress.jar
 
 # Remove the build directory and other files to keep the image small
 RUN rm -rf cbzCompress
-
+#Uninstall JDK
+#Install JRE
+#Delete remnant lib's
 # Run the .jar file when the container starts
 CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","15"]
