@@ -10,3 +10,4 @@ services:
     volumes:
       - ${INPUT_FOLDER}:/app/in
       - ${OUTPUT_FOLDER}:/app/out
+    restart: always

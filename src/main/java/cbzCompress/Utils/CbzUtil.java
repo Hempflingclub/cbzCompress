@@ -42,7 +42,7 @@ abstract public class CbzUtil {
         }
         File resultArchiveFile = resultArchive.toFile();
         String fileName = resultArchiveFile.getName();
-        System.out.println(fileName);
+        System.out.println(Logger.getStringWithTimestamp("Finished: "+fileName)); // Finished CBZ
         Path finishedFolderPath = Path.of(finishedFolder + File.separator + fileName);
         //Just in case create provided Path of finishedFolder
         File finishedFolderFile = new File(finishedFolder);
@@ -77,7 +77,9 @@ abstract public class CbzUtil {
             File extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
             compressImagesInFolder(extractedFolder);
             try {
+                System.out.println(Logger.getStringWithTimestamp("Minimized Images: "+orginalArchive.getName())); // Minimized Images
                 Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
+                System.out.println(Logger.getStringWithTimestamp("Recompressed: "+resultArchive.toFile().getName())); // Recompressed
                 //Delete temp folder, and original Archive
                 constantDelete(extractedFolder);
                 constantDelete(orginalArchive);
@@ -102,12 +104,13 @@ abstract public class CbzUtil {
                     //No further differentiation based on file extension, to avoid custom solutions failing
                     continue;
                 }
-                if(archiveExtension.equals("tmp")){
+                if (archiveExtension.equals("tmp")) {
                     //Ignoring .tmp Archives
                     continue;
                 }
                 File orginalArchive = targetFile;
                 File extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
+                System.out.println(Logger.getStringWithTimestamp("Extracted: "+orginalArchive.getName())); // Extracted
                 return new File[]{orginalArchive, extractedFolder};
             }
         }
