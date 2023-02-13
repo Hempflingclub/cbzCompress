@@ -2,8 +2,6 @@
 FROM ubuntu:latest
 ARG PAT
 ARG BRANCH_NAME
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-*/
-ENV PATH "$JAVA_HOME/bin:$PATH"
 # Set the working directory in the container to /app
 WORKDIR /app
 RUN apt-get update
@@ -12,11 +10,11 @@ RUN apt-get install git openjdk-17-jdk-headless -y
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
 # Compile the Java project
-WORKDIR ./cbzCompress
+WORKDIR /app/cbzCompress
 RUN ./gradlew build
-WORKDIR ../
+WORKDIR /app
 # Copy the .jar file from the build directory to the working directory
-RUN cp ./cbzCompress/build/libs/cbzCompress-1.1.2-all.jar ./cbzCompress.jar
+RUN cp /app/cbzCompress/build/libs/cbzCompress-1.1.2-all.jar /app/cbzCompress.jar
 
 # Remove the build directory and other files to keep the image small
 RUN rm -rf cbzCompress
