@@ -1,6 +1,7 @@
 version: '3.7'
 services:
-  my-java-app:
+  cbz-compress:
+    container_name: cbzCompress
     build:
       context: https://${PAT}@github.com/Hempflingclub/cbzCompress.git
       args:
