@@ -12,12 +12,13 @@ RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BR
 # Compile the Java project
 WORKDIR /app/cbzCompress
 RUN ./gradlew shadowJar
-RUN ./gradlew clean # Remove persistent libs (maybe, too be ensured)
 RUN mv /app/cbzCompress/build/libs/cbzCompress-*-all.jar /app/cbzCompress.jar
+RUN ./gradlew clean # Remove persistent libs (maybe, too be ensured)
 WORKDIR /app
 
 # Remove the build directory and other files to keep the image small
 RUN rm -rf cbzCompress
+RUN rm -rf ~/.gradle
 #Uninstall JDK and Install JRE
 RUN apt-get remove openjdk-17-jdk-headless -y
 RUN apt-get install openjdk-17-jre-headless -y
