@@ -20,6 +20,5 @@ WORKDIR /app
 RUN rm -rf /tmp/* /var/tmp/*
 RUN rm -rf cbzCompress
 RUN rm -rf ~/.gradle
-RUN rm -rf /root
 # Run the .jar file when the container starts
 CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","15"]
