@@ -1,11 +1,12 @@
 # Use an openjdk image as the base image
-FROM ubuntu:latest
+FROM alpine:3.17.2
 ARG PAT
 ARG BRANCH_NAME
 # Set the working directory in the container to /app
 WORKDIR /app
-RUN apt-get update
-RUN apt-get install git openjdk-17-jdk-headless -y
+RUN apk update
+RUN apk add --no-cache git
+RUN apk add --no-cache openjdk-17
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
@@ -16,12 +17,9 @@ RUN mv /app/cbzCompress/build/libs/cbzCompress-*-all.jar /app/cbzCompress.jar
 RUN ./gradlew clean # Remove persistent libs (maybe, too be ensured)
 WORKDIR /app
 
-# Remove the build directory and other files to keep the image small
+RUN rm -rf /tmp/* /var/tmp/*
 RUN rm -rf cbzCompress
 RUN rm -rf ~/.gradle
-#Uninstall JDK and Install JRE
-RUN apt-get remove openjdk-17-jdk-headless -y
-RUN apt-get install openjdk-17-jre-headless -y
-RUN apt-get autoremove -y
+RUN rm -rf /root
 # Run the .jar file when the container starts
 CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","15"]
