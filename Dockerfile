@@ -6,7 +6,7 @@ ARG BRANCH_NAME
 WORKDIR /app
 RUN apk update
 RUN apk add --no-cache git
-RUN apk add --no-cache openjdk-17
+RUN apk add --no-cache openjdk17
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
