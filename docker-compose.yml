@@ -10,4 +10,6 @@ services:
     volumes:
       - ${INPUT_FOLDER}:/app/in
       - ${OUTPUT_FOLDER}:/app/out
+    labels:
+      autoheal: true
     restart: always
