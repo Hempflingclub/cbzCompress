@@ -17,6 +17,7 @@ LINK=$(echo $UPLOAD | jq -r '.data|.downloadPage')
 
 # Print the link!
 echo $LINK
-
+# Writing Link into dl_link
+echo $LINK > dl_link
 echo " "
 echo $LINK >> $GITHUB_STEP_SUMMARY

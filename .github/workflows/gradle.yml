@@ -10,43 +10,62 @@ name: Java build and Artifact Upload
 on:
   push:
   pull_request:
-#  schedule:
-#  - cron: "15 6 1 * *"
+  schedule:
+    - cron: "15 6 1,12,23 * *"
 permissions:
   contents: read
 
 jobs:
   build-with-Artifact:
-
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup Java JDK
-      uses: actions/setup-java@v3.5.1
-      with:
-        java-version: 17
-        distribution: 'temurin'
-    - name: Build
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: build
-        cache-disabled: true
-        gradle-home-cache-cleanup: true
-    - name: 7z Compression
-      uses: edgarrc/action-7z@v1
-      with:
-        args: 7z a -t7z -mx=9 build.7z ./build/libs/*.jar
-    #- name: Upload Build Artifact
-    #  uses: actions/upload-artifact@v3.1.0
-    #  with:
-    #    path: build/libs/*.jar
-    - name: Upload to Gofile # Avoiding File Limits of Github
-      run:  ./.github/scripts/upload.sh build.7z
-      shell: bash
-    - name: Clean Workspace
-      run: rm -rf ./*
-    - name: Delete Branch Cache
-      uses: snnaplab/delete-branch-cache-action@v1.0.0
-      with:
-        github-token: ${{ secrets.TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          # Checkout as many commits as needed for the diff
+          fetch-depth: 2
+      - shell: pwsh
+        # Give an id to the step, so we can reference it later
+        id: check_updated
+        run: |
+          # Diff HEAD with the previous commit
+          $diff = git diff --name-only HEAD^ HEAD
+          
+          # Check if a file under docs/ or with the .md extension has changed (added, modified, deleted)
+          $SourceDiff = $diff | Where-Object { $_ -match 'build.gradle' }
+          $HasDiff = $SourceDiff.Length -gt 0
+          
+          # Set the output named "docs_changed"
+          Write-Host "::set-output name=updated::$HasDiff"
+      - uses: actions/checkout@v3
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.5.1
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - name: Build
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+          cache-disabled: true
+          gradle-home-cache-cleanup: true
+      - name: 7z Compression
+        uses: edgarrc/action-7z@v1
+        with:
+          args: 7z a -t7z -mx=9 build.7z ./build/libs/*.jar
+      #- name: Upload Build Artifact
+      #  uses: actions/upload-artifact@v3.1.0
+      #  with:
+      #    path: build/libs/*.jar
+      - name: Upload to Gofile # Avoiding File Limits of Github
+        run: ./.github/scripts/upload.sh build.7z
+        shell: bash
+      - name: Clean Workspace
+        run: rm -rf ./*
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: steps.check_updated.outputs.updated == 'True'
+      - name: Delete Branch Cache
+        uses: snnaplab/delete-branch-cache-action@v1.0.0
+        with:
+          github-token: ${{ secrets.TOKEN }}
