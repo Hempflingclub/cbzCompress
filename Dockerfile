@@ -2,6 +2,7 @@
 FROM alpine:3.17.2
 ARG PAT
 ARG BRANCH_NAME
+ARG WAIT_TIME
 # Set the working directory in the container to /app
 WORKDIR /app
 RUN apk update
@@ -19,4 +20,4 @@ RUN mv cbzCompress-*-all.jar /app/cbzCompress.jar
 WORKDIR /app
 RUN rm -rf cbzCompress
 # Run the .jar file when the container starts
-CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","15"]
+CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","$WAIT_TIME"]
