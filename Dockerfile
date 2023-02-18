@@ -21,4 +21,4 @@ RUN pip freeze | xargs pip uninstall -y || true
 # Remove all Unneccessary Packages
 RUN apk del git 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Run the .jar file when the container starts
-CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","$WAIT_TIME"]
+CMD java -jar /app/cbzCompress.jar /app/in /app/tmp /app/tmpOut /app/out $WAIT_TIME
