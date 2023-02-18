@@ -10,6 +10,7 @@ RUN apk add --no-cache git
 RUN apk add --no-cache openjdk17
 RUN apk add --no-cache 7zip
 RUN apk add --no-cache curl
+RUN apk add --no-cache jq
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
 
