@@ -7,10 +7,11 @@ services:
       args:
         PAT: ${PAT} # specify in .env File
         BRANCH_NAME: ${BRANCH_NAME} # specify in .env File
-        WAIT_TIME: ${WAIT_TIME}
     volumes:
       - ${INPUT_FOLDER}:/app/in
       - ${OUTPUT_FOLDER}:/app/out
     labels:
       autoheal: true
+    environment:
+      WAIT_TIME: ${WAIT_TIME}
     restart: always
