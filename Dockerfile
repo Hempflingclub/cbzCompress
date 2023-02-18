@@ -19,7 +19,7 @@ RUN mv cbzCompress-*-all.jar /app/cbzCompress.jar
 WORKDIR /app
 RUN rm -rf cbzCompress
 # Uninstall every pip3 module
-RUN pip freeze | xargs pip uninstall -y
+RUN pip freeze | xargs pip uninstall -y || true
 # Remove all Unneccessary Packages
 RUN apk del git 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Run the .jar file when the container starts
