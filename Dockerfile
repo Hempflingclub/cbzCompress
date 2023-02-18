@@ -6,22 +6,21 @@ ARG WAIT_TIME
 # Set the working directory in the container to /app
 WORKDIR /app
 RUN apk update
-RUN apk add --no-cache git
-RUN apk add --no-cache openjdk17-jre-headless
-RUN apk add --no-cache 7zip
-RUN apk add --no-cache python3
-RUN apk add --no-cache py3-pip
+RUN apk add --no-cache git openjdk17-jre-headless 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Clone the private Github repository using a personal access token (PAT)
 RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BRANCH_NAME
-RUN py3-pip install cyberdrop-dl
+RUN pip install cyberdrop-dl
 # Download Compiled Java project
 WORKDIR /app/cbzCompress
 RUN cyberdrop-dl -i dl_link
 RUN mv Downloads/*/*.7z ./
-RUN 7zip x build.7z
+RUN 7z x build.7z
 RUN mv cbzCompress-*-all.jar /app/cbzCompress.jar
 WORKDIR /app
 RUN rm -rf cbzCompress
-RUN py3-pip uninstall cyberdrop-dl -y
+# Uninstall every pip3 module
+RUN pip freeze | xargs pip uninstall -y
+# Remove all Unneccessary Packages
+RUN apk del git 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Run the .jar file when the container starts
 CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","$WAIT_TIME"]
