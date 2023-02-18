@@ -14,7 +14,6 @@ RUN git clone https://$PAT@github.com/Hempflingclub/cbzCompress.git --branch $BR
 
 # Download Compiled Java project
 WORKDIR /app/cbzCompress/.github/scripts
-RUN chmod +x ./*.sh
 RUN ./downloadLatest.sh
 RUN 7zip x build.7z
 RUN mv cbzCompress-*-all.jar /app/cbzCompress.jar
