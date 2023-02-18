@@ -2,7 +2,7 @@
 FROM alpine:3.17.2
 ARG PAT
 ARG BRANCH_NAME
-ARG WAIT_TIME
+ENV WAIT_TIME=15
 # Set the working directory in the container to /app
 WORKDIR /app
 RUN apk update
@@ -23,4 +23,4 @@ RUN pip freeze | xargs pip uninstall -y || true
 # Remove all Unneccessary Packages
 RUN apk del git 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Run the .jar file when the container starts
-CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","${WAIT_TIME}"]
+CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","$WAIT_TIME"]
