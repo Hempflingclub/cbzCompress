@@ -1,9 +1,7 @@
-# Use an openjdk image as the base image
 FROM alpine:3.17.2
 ARG PAT
 ARG BRANCH_NAME
 ENV WAIT_TIME=15
-# Set the working directory in the container to /app
 WORKDIR /app
 RUN apk update
 RUN apk add --no-cache git openjdk17-jre-headless 7zip python3-dev py3-pip gcc libc-dev linux-headers
@@ -18,9 +16,9 @@ RUN 7z x build.7z
 RUN mv cbzCompress-*-all.jar /app/cbzCompress.jar
 WORKDIR /app
 RUN rm -rf cbzCompress
-# Uninstall every pip3 module
+# Uninstall every pip module
 RUN pip freeze | xargs pip uninstall -y || true
 # Remove all Unneccessary Packages
 RUN apk del git 7zip python3-dev py3-pip gcc libc-dev linux-headers
 # Run the .jar file when the container starts
-CMD ["java", "-jar", "/app/cbzCompress.jar","/app/in","/app/tmp","/app/tmpOut","/app/out","$WAIT_TIME"]
+CMD java -jar /app/cbzCompress.jar /app/in /app/tmp /app/tmpOut /app/out $WAIT_TIME
