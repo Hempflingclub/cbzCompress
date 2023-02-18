@@ -1,4 +1,4 @@
 #!/bin/bash
 
 link=$(cat ../../dl_link)
-./download_gofile.sh "$link"
+python gofile-downloader.py "$link"
