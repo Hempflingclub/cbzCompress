@@ -7,7 +7,7 @@ ARG WAIT_TIME
 WORKDIR /app
 RUN apk update
 RUN apk add --no-cache git
-RUN apk add --no-cache openjdk17
+RUN apk add --no-cache openjdk17-jre-headless
 RUN apk add --no-cache 7zip
 RUN apk add --no-cache curl
 RUN apk add --no-cache jq
