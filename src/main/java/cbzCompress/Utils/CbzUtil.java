@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cbzCompress.Utils.SevenZUtil.constantDelete;
 import static java.lang.Thread.sleep;
@@ -42,7 +44,7 @@ abstract public class CbzUtil {
         }
         File resultArchiveFile = resultArchive.toFile();
         String fileName = resultArchiveFile.getName();
-        System.out.println(Logger.getStringWithTimestamp("Finished: "+fileName)); // Finished CBZ
+        System.out.println(Logger.getStringWithTimestamp("Finished: " + fileName)); // Finished CBZ
         Path finishedFolderPath = Path.of(finishedFolder + File.separator + fileName);
         //Just in case create provided Path of finishedFolder
         File finishedFolderFile = new File(finishedFolder);
@@ -77,9 +79,9 @@ abstract public class CbzUtil {
             File extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
             compressImagesInFolder(extractedFolder);
             try {
-                System.out.println(Logger.getStringWithTimestamp("Minimized Images: "+orginalArchive.getName())); // Minimized Images
+                System.out.println(Logger.getStringWithTimestamp("Minimized Images: " + orginalArchive.getName())); // Minimized Images
                 Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
-                System.out.println(Logger.getStringWithTimestamp("Recompressed: "+resultArchive.toFile().getName())); // Recompressed
+                System.out.println(Logger.getStringWithTimestamp("Recompressed: " + resultArchive.toFile().getName())); // Recompressed
                 //Delete temp folder, and original Archive
                 constantDelete(extractedFolder);
                 constantDelete(orginalArchive);
@@ -97,7 +99,9 @@ abstract public class CbzUtil {
         Path targetArchiveFolderPath = Path.of(targetArchiveFolder);
         File targetArchiveFolderFile = targetArchiveFolderPath.toFile();
         if (targetArchiveFolderFile.listFiles() != null) {
-            for (File targetFile : Objects.requireNonNull(targetArchiveFolderFile.listFiles())) {
+            File[] files = Objects.requireNonNull(targetArchiveFolderFile.listFiles());
+            shuffleFiles(files);
+            for (File targetFile : files) {
                 String archiveExtension = SevenZUtil.getFileExtension(targetArchiveFolderFile);
                 if (targetFile.isDirectory()) {
                     //Cannot be an archive
@@ -110,10 +114,20 @@ abstract public class CbzUtil {
                 }
                 File orginalArchive = targetFile;
                 File extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
-                System.out.println(Logger.getStringWithTimestamp("Extracted: "+orginalArchive.getName())); // Extracted
+                System.out.println(Logger.getStringWithTimestamp("Extracted: " + orginalArchive.getName())); // Extracted
                 return new File[]{orginalArchive, extractedFolder};
             }
         }
         return null;
+    }
+
+    private static void shuffleFiles(File[] files) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = files.length - 1; i > 0; i--) {
+            int index = rnd.nextInt(i + 1);
+            File a = files[index];
+            files[index] = files[i];
+            files[i] = a;
+        }
     }
 }
