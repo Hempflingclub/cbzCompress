@@ -8,6 +8,10 @@
 name: Java build and Artifact Upload
 
 on:
+  workflow_run:
+    workflows: [Triggering Weekly Compile]
+    types:
+      - completed
   push:
     branches-ignore:
       - master

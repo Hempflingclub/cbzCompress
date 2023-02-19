@@ -2,6 +2,5 @@
 # Todo
 ## Optimization
 * Dynamic Compression, based on available RAM
-* Workflow weekly run to start workflow of all branches
 ## More Features
 * Support for gif compression via ffmpeg
