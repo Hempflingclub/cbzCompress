@@ -1,0 +1,17 @@
+name: Triggering Weekly Compile
+on:
+  schedule:
+    - cron: "15 6 * * 3"
+permissions:
+  contents: read
+jobs:
+  Clean-up:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clean Workspace
+        run: rm -rf ./*
+      - name: Delete Branch Cache
+        uses: snnaplab/delete-branch-cache-action@v1.0.0
+        with:
+          github-token: ${{ secrets.TOKEN }}
