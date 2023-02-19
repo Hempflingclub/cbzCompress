@@ -14,10 +14,6 @@ on:
   pull_request:
     branches-ignore:
       - master
-  schedule:
-    - branches-ignore:
-      - master
-    - cron: "15 6 * * 3"
 permissions:
   contents: read
 
