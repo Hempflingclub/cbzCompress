@@ -9,18 +9,11 @@ name: Java build and Artifact Upload
 
 on:
   push:
-    branches:
-      - arm64
-      - win64
+    branches-ignore:
+      - master
   pull_request:
-    branches:
-      - arm64
-      - win64
-  schedule:
-    branches:
-      - arm64
-      - win64
-    cron: "15 6 1,12,23 * *"
+    branches-ignore:
+      - master
 permissions:
   contents: read
 
