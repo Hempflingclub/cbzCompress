@@ -1,13 +1,24 @@
 package cbzCompress.Utils;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Logger {
     static final private String logFileName = "crashLog.txt";
-    static final private File logFile = Paths.get(logFileName).toFile();
+    static final private File logFile = Paths.get(getJarFolder().getPath(), File.separator, logFileName).toFile();
+
+    public static File getJarFolder() {
+        try {
+            File jarFolder = new File(Logger.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            return jarFolder;
+        } catch (URISyntaxException e) {
+            Logger.logException(e);
+            throw new RuntimeException(e);
+        }
+    }
 
     private static void writeIntoLogFile(String textLine) {
         try {
