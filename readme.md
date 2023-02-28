@@ -2,5 +2,6 @@
 # Todo
 ## Optimization
 * Dynamic Compression, based on available RAM
+* Complete Custom Path Resolving to solve Unicode issue on Linux
 ## More Features
 * Support for gif compression via ffmpeg
