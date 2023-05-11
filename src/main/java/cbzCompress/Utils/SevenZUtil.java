@@ -68,6 +68,7 @@ abstract class SevenZUtil { //package-private
                     InputStream archivedFileInputStream = archive.getInputStream(archivedFile);
                     FileOutputStream out = new FileOutputStream(currentFilePath);
                     byte[] content = archivedFileInputStream.readAllBytes();
+                    archivedFileInputStream.close();
                     out.write(content);
                     out.close();
                 }
@@ -110,6 +111,7 @@ abstract class SevenZUtil { //package-private
                     InputStream archivedFileInputStream = archive.getInputStream(archivedFile);
                     FileOutputStream out = new FileOutputStream(currentFilePath);
                     byte[] content = archivedFileInputStream.readAllBytes();
+                    archivedFileInputStream.close();
                     out.write(content);
                     out.close();
                 }
