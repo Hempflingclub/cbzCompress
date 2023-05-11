@@ -25,6 +25,7 @@ abstract class ImageUtil { //package-private
         }
         if (orgExtension.equals("png")) {
             convertToJPGImage(imageMat, imageFile);
+            imageMat.release();
         }
         //Overwriting Image data, so ensuring after png -> jpg conversion no confusions and reconversions to png happen
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
@@ -32,6 +33,7 @@ abstract class ImageUtil { //package-private
         imageMat = getMat(imageFile);
         while (!imageFile.exists()) ; //Busy waiting until FileSystem finished writing file
         minimizeJPGImage(imageMat, imageFile, quality);
+        imageMat.release();
     }
 
     private static void minimizeJPGImage(Mat imageMat, File imageFile, int quality) {
