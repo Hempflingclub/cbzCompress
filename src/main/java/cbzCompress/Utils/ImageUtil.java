@@ -16,7 +16,7 @@ abstract class ImageUtil { //package-private
     private static void convertAndAdjustQuality(File imageFile, int quality) {
         // read the image file
         Mat imageMat = getMat(imageFile);
-        if(imageMat.equals(Mat.EMPTY)){
+        if(imageMat.isNull()){
             imageMat.release();
             return;
         }
@@ -35,7 +35,7 @@ abstract class ImageUtil { //package-private
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
         imageMat = getMat(imageFile);
-        if(imageMat.equals(Mat.EMPTY)){
+        if(imageMat.isNull()){
             imageMat.release();
             return;
         }
