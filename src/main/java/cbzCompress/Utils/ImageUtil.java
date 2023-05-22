@@ -16,6 +16,9 @@ abstract class ImageUtil { //package-private
     private static void convertAndAdjustQuality(File imageFile, int quality) {
         // read the image file
         Mat imageMat = getMat(imageFile);
+        if(imageMat.equals(Mat.EMPTY)){
+            return;
+        }
         // get the file name without the extension
         String orgExtension = SevenZUtil.getFileExtension(imageFile);
         // create a new file with the same name in the same directory
@@ -31,6 +34,9 @@ abstract class ImageUtil { //package-private
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
         imageMat = getMat(imageFile);
+        if(imageMat.equals(Mat.EMPTY)){
+            return;
+        }
         while (!imageFile.exists()) ; //Busy waiting until FileSystem finished writing file
         minimizeJPGImage(imageMat, imageFile, quality);
         imageMat.release();
@@ -106,7 +112,15 @@ abstract class ImageUtil { //package-private
 
     private static Mat getMat(File imageFile) {
         String filePath = getPath(imageFile);
-        return opencv_imgcodecs.imread(filePath, opencv_imgcodecs.IMREAD_UNCHANGED);
+        Mat newMat = Mat.EMPTY;
+        try{
+            newMat = opencv_imgcodecs.imread(filePath, opencv_imgcodecs.IMREAD_UNCHANGED);
+        }catch (Exception e){
+            Logger.logException(e);
+            Logger.getStringWithTimestamp("Failed to parse' "+imageFile.getName()+" ' trying to continue");
+            return newMat;
+        }
+        return newMat;
     }
 
     private static String getPath(File file) {
