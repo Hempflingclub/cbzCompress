@@ -93,7 +93,15 @@ abstract class ImageUtil { //package-private
         String orgExtension = SevenZUtil.getFileExtension(originalImageFile);
         int extensionIndex = originalImageFilePath.lastIndexOf(orgExtension);
         String finalImagePath = originalImageFilePath.substring(0, extensionIndex) + newExtension;
-        return opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
+        boolean worked=false;
+        try{
+            worked = opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
+        }catch (Exception e){
+            Logger.logException(e);
+            Logger.getStringWithTimestamp("Failed to Compress' "+originalImageFile.getName()+" ' trying to continue");
+            return worked;
+        }
+        return worked;
     }
 
     private static Mat getMat(File imageFile) {
