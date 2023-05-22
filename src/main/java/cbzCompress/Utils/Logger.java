@@ -24,7 +24,7 @@ public class Logger {
     private static void writeIntoLogFile(String textLine) {
         try {
             FileWriter fw = new FileWriter(logFile);
-            fw.write(getStringWithTimestamp(textLine) + System.getProperty("line.separator"));
+            fw.append(getStringWithTimestamp(textLine)).append(System.getProperty("line.separator"));
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
