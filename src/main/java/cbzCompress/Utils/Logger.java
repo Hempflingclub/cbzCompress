@@ -13,6 +13,7 @@ public class Logger {
     public static File getJarFolder() {
         try {
             File jarFolder = new File(Logger.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            jarFolder = jarFolder.getParentFile();
             return jarFolder;
         } catch (URISyntaxException e) {
             Logger.logException(e);
