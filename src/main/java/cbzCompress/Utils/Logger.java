@@ -33,7 +33,12 @@ public class Logger {
 
     public static void logException(Exception exception) {
         String errorMessage = exception.getMessage();
+        StackTraceElement[] stacktraceList = exception.getStackTrace();
         writeIntoLogFile(errorMessage);
+        for (StackTraceElement stacktrace : stacktraceList) {
+            String stacktraceString = stacktrace.toString();
+            writeIntoLogFile(stacktraceString);
+        }
     }
 
     public static String getCurrentTimeFormatted() {
