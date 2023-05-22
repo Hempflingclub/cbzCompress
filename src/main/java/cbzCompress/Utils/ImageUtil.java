@@ -16,7 +16,7 @@ abstract class ImageUtil { //package-private
     private static void convertAndAdjustQuality(File imageFile, int quality) {
         // read the image file
         Mat imageMat = getMat(imageFile);
-        if(imageMat.isNull()){
+        if (imageMat.isNull()) {
             imageMat.release();
             return;
         }
@@ -35,7 +35,7 @@ abstract class ImageUtil { //package-private
         String pureImageFileName = SevenZUtil.getPureFileName(imageFile);
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
         imageMat = getMat(imageFile);
-        if(imageMat.isNull()){
+        if (imageMat.isNull()) {
             imageMat.release();
             return;
         }
@@ -101,12 +101,18 @@ abstract class ImageUtil { //package-private
         String orgExtension = SevenZUtil.getFileExtension(originalImageFile);
         int extensionIndex = originalImageFilePath.lastIndexOf(orgExtension);
         String finalImagePath = originalImageFilePath.substring(0, extensionIndex) + newExtension;
-        boolean worked=false;
-        try{
+        boolean worked = false;
+        if (!originalImageFile.exists()) {
+            return worked;
+        }
+        if (imageMat.isNull()) {
+            return worked;
+        }
+        try {
             worked = opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
-        }catch (Exception e){
+        } catch (Exception e) {
             Logger.logException(e);
-            System.out.println(Logger.getStringWithTimestamp("Failed to Compress' "+originalImageFile.getName()+" ' trying to continue"));
+            System.out.println(Logger.getStringWithTimestamp("Failed to Compress' " + originalImageFile.getName() + " ' trying to continue"));
             return worked;
         }
         return worked;
@@ -115,11 +121,14 @@ abstract class ImageUtil { //package-private
     private static Mat getMat(File imageFile) {
         String filePath = getPath(imageFile);
         Mat newMat = Mat.EMPTY;
-        try{
+        if (!imageFile.exists()) {
+            return newMat;
+        }
+        try {
             newMat = opencv_imgcodecs.imread(filePath, opencv_imgcodecs.IMREAD_UNCHANGED);
-        }catch (Exception e){
+        } catch (Exception e) {
             Logger.logException(e);
-            System.out.println(Logger.getStringWithTimestamp("Failed to parse' "+imageFile.getName()+" ' trying to continue"));
+            System.out.println(Logger.getStringWithTimestamp("Failed to parse' " + imageFile.getName() + " ' trying to continue"));
             return newMat;
         }
         return newMat;
