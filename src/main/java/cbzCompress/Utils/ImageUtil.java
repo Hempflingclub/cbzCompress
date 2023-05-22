@@ -17,6 +17,7 @@ abstract class ImageUtil { //package-private
         // read the image file
         Mat imageMat = getMat(imageFile);
         if(imageMat.equals(Mat.EMPTY)){
+            imageMat.release();
             return;
         }
         // get the file name without the extension
@@ -35,6 +36,7 @@ abstract class ImageUtil { //package-private
         imageFile = new File(imageFile.getParent(), pureImageFileName + ".jpg");
         imageMat = getMat(imageFile);
         if(imageMat.equals(Mat.EMPTY)){
+            imageMat.release();
             return;
         }
         while (!imageFile.exists()) ; //Busy waiting until FileSystem finished writing file
@@ -104,7 +106,7 @@ abstract class ImageUtil { //package-private
             worked = opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
         }catch (Exception e){
             Logger.logException(e);
-            Logger.getStringWithTimestamp("Failed to Compress' "+originalImageFile.getName()+" ' trying to continue");
+            System.out.println(Logger.getStringWithTimestamp("Failed to Compress' "+originalImageFile.getName()+" ' trying to continue"));
             return worked;
         }
         return worked;
@@ -117,7 +119,7 @@ abstract class ImageUtil { //package-private
             newMat = opencv_imgcodecs.imread(filePath, opencv_imgcodecs.IMREAD_UNCHANGED);
         }catch (Exception e){
             Logger.logException(e);
-            Logger.getStringWithTimestamp("Failed to parse' "+imageFile.getName()+" ' trying to continue");
+            System.out.println(Logger.getStringWithTimestamp("Failed to parse' "+imageFile.getName()+" ' trying to continue"));
             return newMat;
         }
         return newMat;
