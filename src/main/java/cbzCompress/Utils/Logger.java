@@ -23,7 +23,8 @@ public class Logger {
 
     private static void writeIntoLogFile(String textLine) {
         try {
-            FileWriter fw = new FileWriter(logFile);
+            if(!logFile.exists()){while(!logFile.createNewFile());}
+            FileWriter fw = new FileWriter(logFile,true);
             fw.append(getStringWithTimestamp(textLine)).append(System.getProperty("line.separator"));
             fw.close();
         } catch (IOException e) {
