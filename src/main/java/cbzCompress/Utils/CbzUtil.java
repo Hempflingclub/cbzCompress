@@ -14,9 +14,8 @@ import static java.lang.Thread.sleep;
 
 abstract public class CbzUtil {
     //Use Utils to solve Minimize CBZ Size, by recompressing after lowering Image Quality to 70
-    protected static final int quality = 70;
 
-    private static void compressImagesInFolder(File targetFolderFile) {
+    private static void compressImagesInFolder(File targetFolderFile, int quality) {
         File[] imageFiles = targetFolderFile.listFiles();
         assert imageFiles != null;
         for (File imageFile : imageFiles) {
@@ -36,9 +35,9 @@ abstract public class CbzUtil {
         }
     }
 
-    public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder, int waitingMinutes) {
+    public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder, int waitingMinutes, int quality) {
         wait(waitingMinutes);
-        Path resultArchive = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder);
+        Path resultArchive = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder,quality);
         if (resultArchive == null) {
             return false;
         }
@@ -64,7 +63,7 @@ abstract public class CbzUtil {
         return true;
     }
 
-    private static Path fullRecompressionOfFirstFile(String targetArchiveFolder, String tempFolder, String destFolder) {
+    private static Path fullRecompressionOfFirstFile(String targetArchiveFolder, String tempFolder, String destFolder, int quality) {
         //Just in case create provided Paths
         File targetArchiveFolderFile = new File(targetArchiveFolder);
         File tempFolderFile = new File(tempFolder);
@@ -77,7 +76,7 @@ abstract public class CbzUtil {
         if (extractionResult != null) {
             File orginalArchive = extractionResult[0];
             File extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
-            compressImagesInFolder(extractedFolder);
+            compressImagesInFolder(extractedFolder,quality);
             try {
                 System.out.println(Logger.getStringWithTimestamp("Minimized Images: " + orginalArchive.getName())); // Minimized Images
                 Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
