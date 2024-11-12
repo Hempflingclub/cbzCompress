@@ -97,7 +97,7 @@ abstract class ImageUtil { //package-private
         String originalImageFilePath = getPath(originalImageFile);
         //Replacing Extension, to ensure Short Paths of Windows work
         String orgExtension = SevenZUtil.getFileExtension(originalImageFile);
-        int extensionIndex = originalImageFilePath.lastIndexOf(orgExtension);
+        int extensionIndex = originalImageFilePath.toLowerCase().lastIndexOf(orgExtension);
         String finalImagePath = originalImageFilePath.substring(0, extensionIndex) + newExtension;
         boolean worked = false;
         if (!originalImageFile.exists()) {

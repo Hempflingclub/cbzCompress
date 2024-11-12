@@ -43,7 +43,7 @@ public class Main {
             System.exit(0);
         }
         boolean recompressingStatus = true;
-        System.out.println("Started cbzCompress V1.3.15");
+        System.out.println("Started cbzCompress V1.3.16");
         while (recompressingStatus) {
             recompressingStatus = CbzUtil.constantCompressionAction(inputPath, tempPath, outputPath, finishedPath, waitingMinutes,quality);
         }
