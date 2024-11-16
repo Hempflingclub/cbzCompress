@@ -45,12 +45,10 @@ abstract class ImageUtil { //package-private
     private static void minimizeJPGImage(Mat imageMat, File imageFile, int quality) {
         // write the image data to the new file with the quality
         // Ensuring no data loss on unexpected quit
-        String fileName = SevenZUtil.getPureFileName(imageFile);
         String newExtension = "tmp.jpg";
-        File tempImageFile = new File(imageFile.getParent(), fileName + "." + newExtension);
-        if (tempImageFile.exists()) {
-            while (!tempImageFile.delete()) ;
-        }
+        File tempImageFile = new File(imageFile.getParent(), "TMP" + "." + newExtension);
+        if (tempImageFile.exists()) while (!tempImageFile.delete()) ;
+
         if (compressJPG(newExtension, imageFile, imageMat, quality)) {
             //Successfully applied quality to JPG
             //Overwrite Orginal with tmp
@@ -59,29 +57,23 @@ abstract class ImageUtil { //package-private
         } else {
             //Failed to apply quality
             //Delete fragment
-            if (tempImageFile.exists()) {
-                while (!tempImageFile.delete()) ;
-            }
+            if (tempImageFile.exists())while (!tempImageFile.delete()) ;
         }
     }
 
     private static void convertToJPGImage(Mat imageMat, File imageFile) {
-        String pureFileName = SevenZUtil.getPureFileName(imageFile);
         String newExtension = "jpg";
-        File newImageFile = new File(imageFile.getParent(), pureFileName + "." + newExtension);
+        File newImageFile = new File(imageFile.getParent(), "TMP" + "." + newExtension);
         // write the image data to the new file with the quality
         if (convertToJPG(newExtension, imageFile, imageMat)) {
             //Successfully created JPG
             //Delete the original file
-            if (imageFile.exists()) {
-                while (!imageFile.delete()) ;
-            }
+            if (imageFile.exists()) while (!imageFile.delete()) ;
+            while(!newImageFile.renameTo(imageFile));
         } else {
             //Failed to create JPG
             //Delete JPG fragment
-            if (newImageFile.exists()) {
-                while (!newImageFile.delete()) ;
-            }
+            if (newImageFile.exists()) while (!newImageFile.delete()) ;
         }
     }
 
@@ -94,11 +86,7 @@ abstract class ImageUtil { //package-private
     }
 
     private static boolean makeImage(String newExtension, File originalImageFile, Mat imageMat, int[] imageOptions) {
-        String originalImageFilePath = getPath(originalImageFile);
-        //Replacing Extension, to ensure Short Paths of Windows work
-        String orgExtension = SevenZUtil.getFileExtension(originalImageFile);
-        int extensionIndex = originalImageFilePath.toLowerCase().lastIndexOf(orgExtension);
-        String finalImagePath = originalImageFilePath.substring(0, extensionIndex) + newExtension;
+        File tmpFile = new File(originalImageFile.getParentFile(), "TMP" + "." + newExtension); //To avoid Filesystem "optimizations" from Windows like 0~1 because the C code calls the Windows API instead of the FileSystem
         boolean worked = false;
         if (!originalImageFile.exists()) {
             return worked;
@@ -107,7 +95,7 @@ abstract class ImageUtil { //package-private
             return worked;
         }
         try {
-            worked = opencv_imgcodecs.imwrite(finalImagePath, imageMat, imageOptions);
+            worked = opencv_imgcodecs.imwrite(tmpFile.getAbsolutePath(), imageMat, imageOptions);
         } catch (Exception e) {
             Logger.logException(e);
             System.out.println(Logger.getStringWithTimestamp("Failed to Compress' " + originalImageFile.getName() + " ' trying to continue"));
