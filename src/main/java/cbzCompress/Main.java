@@ -2,6 +2,8 @@ package cbzCompress;
 
 import cbzCompress.Utils.CbzUtil;
 
+import java.io.File;
+
 public class Main {
     public static void main(String[] args) {
         if (args.length < 5 || args.length > 6) {
@@ -43,9 +45,9 @@ public class Main {
             System.exit(0);
         }
         boolean recompressingStatus = true;
-        System.out.println("Started cbzCompress V1.3.17");
+        System.out.println("Started cbzCompress V1.4.0");
         while (recompressingStatus) {
-            recompressingStatus = CbzUtil.constantCompressionAction(inputPath, tempPath, outputPath, finishedPath, waitingMinutes,quality);
+            recompressingStatus = CbzUtil.constantCompressionAction(new File(inputPath), new File(tempPath), new File(outputPath), new File(finishedPath), waitingMinutes,quality);
             System.gc();
         }
         System.out.println("Finished");
