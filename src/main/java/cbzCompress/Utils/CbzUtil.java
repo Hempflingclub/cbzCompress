@@ -1,10 +1,10 @@
 package cbzCompress.Utils;
 
 
+import cbzCompress.DataTypes.Result;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -35,26 +35,23 @@ abstract public class CbzUtil {
         }
     }
 
-    public static boolean constantCompressionAction(String targetArchiveFolder, String tempFolder, String destFolder, String finishedFolder, int waitingMinutes, int quality) {
+    public static boolean constantCompressionAction(File targetArchiveFolder, File tempFolder, File destFolder, File finishedFolder, int waitingMinutes, int quality) {
         wait(waitingMinutes);
-        Path resultArchive = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder,quality);
-        if (resultArchive == null) {
-            return false;
-        }
-        File resultArchiveFile = resultArchive.toFile();
-        String fileName = resultArchiveFile.getName();
+        Result result = fullRecompressionOfFirstFile(targetArchiveFolder, tempFolder, destFolder,quality);
+        if (result == null) return false;
+        File resultArchive = result.recompressedArchive();
+        File originalArchive = result.originalArchive();
+
+
+        String fileName = originalArchive.getName();
+        File finishedFile = new File(finishedFolder,fileName);
         System.out.println(Logger.getStringWithTimestamp("Finished: " + fileName)); // Finished CBZ
-        Path finishedFolderPath = Path.of(finishedFolder + File.separator + fileName);
-        //Just in case create provided Path of finishedFolder
-        File finishedFolderFile = new File(finishedFolder);
-        finishedFolderFile.mkdirs();
+        finishedFolder.mkdirs();
         //Moving of File
         try {
-            Files.copy(resultArchive, finishedFolderPath);
-            if (resultArchiveFile.exists()) {
-                while (!resultArchiveFile.delete()) ;
-            }
-        } catch (IOException e) {
+            while(!resultArchive.renameTo(finishedFile));
+            constantDelete(originalArchive);
+        } catch (Exception e) {
             System.out.println("IOException during moving to finished folder");
             Logger.logException(e);
             e.printStackTrace();
@@ -63,28 +60,23 @@ abstract public class CbzUtil {
         return true;
     }
 
-    private static Path fullRecompressionOfFirstFile(String targetArchiveFolder, String tempFolder, String destFolder, int quality) {
+    private static Result fullRecompressionOfFirstFile(File targetArchiveFolder, File tempFolder, File destFolder, int quality) {
         //Just in case create provided Paths
-        File targetArchiveFolderFile = new File(targetArchiveFolder);
-        File tempFolderFile = new File(tempFolder);
-        File destFolderFile = new File(destFolder);
-        targetArchiveFolderFile.mkdirs();
-        tempFolderFile.mkdirs();
-        destFolderFile.mkdirs();
+        targetArchiveFolder.mkdirs();
+        tempFolder.mkdirs();
+        destFolder.mkdirs();
 
         File[] extractionResult = extractFirstArchiveInTarget(targetArchiveFolder, tempFolder);
         if (extractionResult != null) {
-            File orginalArchive = extractionResult[0];
-            File extractedFolder = extractionResult[1]; // This cannot be done in single Line, because Java doesn't support it apparently
+            File orginalArchive = extractionResult[0], extractedFolder = extractionResult[1];
             compressImagesInFolder(extractedFolder,quality);
             try {
                 System.out.println(Logger.getStringWithTimestamp("Minimized Images: " + orginalArchive.getName())); // Minimized Images
-                Path resultArchive = SevenZUtil.compressFolder(extractedFolder.toString(), destFolder);
-                System.out.println(Logger.getStringWithTimestamp("Recompressed: " + resultArchive.toFile().getName())); // Recompressed
-                //Delete temp folder, and original Archive
+                File resultArchive = SevenZUtil.compressFolder(extractedFolder, destFolder);
+                System.out.println(Logger.getStringWithTimestamp("Recompressed: " + orginalArchive.getName())); // Recompressed
+                //Delete temp folder
                 constantDelete(extractedFolder);
-                constantDelete(orginalArchive);
-                return resultArchive;
+                return new Result(resultArchive,orginalArchive);
             } catch (IOException e) {
                 constantDelete(extractedFolder);
                 Logger.logException(e);
@@ -94,14 +86,12 @@ abstract public class CbzUtil {
         return null;
     }
 
-    private static File[] extractFirstArchiveInTarget(String targetArchiveFolder, String destFolder) {
-        Path targetArchiveFolderPath = Path.of(targetArchiveFolder);
-        File targetArchiveFolderFile = targetArchiveFolderPath.toFile();
-        if (targetArchiveFolderFile.listFiles() != null) {
-            File[] files = Objects.requireNonNull(targetArchiveFolderFile.listFiles());
+    private static File[] extractFirstArchiveInTarget(File targetArchiveFolder, File destFolder) {
+        if (targetArchiveFolder.listFiles() != null) {
+            File[] files = Objects.requireNonNull(targetArchiveFolder.listFiles());
             shuffleFiles(files);
             for (File targetFile : files) {
-                String archiveExtension = SevenZUtil.getFileExtension(targetArchiveFolderFile);
+                String archiveExtension = SevenZUtil.getFileExtension(targetArchiveFolder);
                 if (targetFile.isDirectory()) {
                     //Cannot be an archive
                     //No further differentiation based on file extension, to avoid custom solutions failing
@@ -111,10 +101,9 @@ abstract public class CbzUtil {
                     //Ignoring .tmp Archives
                     continue;
                 }
-                File orginalArchive = targetFile;
-                File extractedFolder = SevenZUtil.extract7zArchive(targetFile.getPath(), destFolder);
-                System.out.println(Logger.getStringWithTimestamp("Extracted: " + orginalArchive.getName())); // Extracted
-                return new File[]{orginalArchive, extractedFolder};
+                File extractedFolder = SevenZUtil.extract7zArchive(targetFile, destFolder);
+                System.out.println(Logger.getStringWithTimestamp("Extracted: " + targetFile.getName())); // Extracted
+                return new File[]{targetFile, extractedFolder};
             }
         }
         return null;
