@@ -3,9 +3,8 @@ services:
   cbz-compress:
     container_name: cbzCompress
     build:
-      context: https://${PAT}@github.com/Hempflingclub/cbzCompress.git
+      context: https://github.com/Hempflingclub/cbzCompress.git
       args:
-        PAT: ${PAT} # specify in .env File
         BRANCH_NAME: ${BRANCH_NAME} # specify in .env File
     volumes:
       - ${INPUT_FOLDER}:/app/in
