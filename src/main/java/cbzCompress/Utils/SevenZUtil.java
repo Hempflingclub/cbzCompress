@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -17,22 +16,19 @@ import static java.lang.Thread.sleep;
 abstract class SevenZUtil { //package-private
     protected static final String fileExtension = ".cbz";
 
-    protected static Path compressFolder(String folderPath, String destinationDir) throws IOException {
-        File folder = new File(folderPath);
-        String fileName = folder.getName();
-        String outputFilePath = destinationDir + File.separator + fileName + fileExtension;
-        File outputFile = new File(outputFilePath);
-        if (outputFile.exists()) {
-            while (!outputFile.delete()) ;
-        }
+    protected static File compressFolder(File folderPath, File destinationDir) throws IOException {
+        String fileName = folderPath.getName();
+        File outputFile = new File(destinationDir,fileName+fileExtension);
+        if (outputFile.exists()) while (!outputFile.delete()) ;
+
         SevenZOutputFile sevenZOutput = new SevenZOutputFile(outputFile);
         LZMA2Options lzma2Options = new LZMA2Options();
         lzma2Options.setPreset(LZMA2Options.PRESET_MAX);
         lzma2Options.setDictSize(16 << 20);
         sevenZOutput.setContentMethods(Collections.singleton(new SevenZMethodConfiguration(SevenZMethod.LZMA, lzma2Options)));
-        compressFolderUtil(folder, sevenZOutput);
+        compressFolderUtil(folderPath, sevenZOutput);
         sevenZOutput.close();
-        return Path.of(outputFilePath);
+        return outputFile;
     }
 
     private static void compressFolderUtil(File folder, SevenZOutputFile sevenZOutput) throws IOException {
@@ -46,27 +42,22 @@ abstract class SevenZUtil { //package-private
         }
     }
 
-    protected static File extract7zArchive(String filePath, String destPath) {
-        File targetArchive = new File(filePath);
+    protected static File extract7zArchive(File filePath, File destPath) {
         //Building Structure for Extracted Files
-        String fileName = targetArchive.getName();
-        String pureFileName = SevenZUtil.getPureFileName(fileName);
-        Path outputFolderPath = Path.of(destPath, File.separator, pureFileName);
-        File outputFolder = outputFolderPath.toFile();
-        if (outputFolder.exists()) {
-            constantDelete(outputFolder);
-        }
-        outputFolder.mkdir();
+        File outputFolder = new File(destPath, "tmp");
+        if (outputFolder.exists()) constantDelete(outputFolder);
+
+        while (!outputFolder.mkdir()) ;
         try {
-            SevenZFile archive = new SevenZFile(targetArchive);
+            SevenZFile archive = new SevenZFile(filePath);
             for (SevenZArchiveEntry archivedFile : archive.getEntries()) {
                 if (!archivedFile.isDirectory() && archivedFile.getSize() > 1) {
                     String currentFileName = archivedFile.getName();
                     //This will just get the 'filename' and not any folder structure of the archive, annoying to find out
                     currentFileName = currentFileName.substring(currentFileName.lastIndexOf("/") + 1);
-                    String currentFilePath = outputFolderPath + File.separator + currentFileName;
+                    File currentFile = new File(outputFolder, currentFileName);
                     InputStream archivedFileInputStream = archive.getInputStream(archivedFile);
-                    FileOutputStream out = new FileOutputStream(currentFilePath);
+                    FileOutputStream out = new FileOutputStream(currentFile);
                     byte[] content = archivedFileInputStream.readAllBytes();
                     archivedFileInputStream.close();
                     out.write(content);
@@ -89,27 +80,23 @@ abstract class SevenZUtil { //package-private
         return null;
     }
 
-    private static File extractZipArchive(String filePath, String destPath) {
-        File targetArchive = new File(filePath);
+    private static File extractZipArchive(File filePath, File destPath) {
         //Building Structure for Extracted Files
-        String fileName = targetArchive.getName();
-        String pureFileName = SevenZUtil.getPureFileName(fileName);
-        Path outputFolderPath = Path.of(destPath, File.separator, pureFileName);
-        File outputFolder = outputFolderPath.toFile();
+        File outputFolder = new File(destPath, "tmp");
         if (outputFolder.exists()) {
             constantDelete(outputFolder);
         }
-        outputFolder.mkdir();
+        while (!outputFolder.mkdir()) ;
         try {
-            ZipFile archive = new ZipFile(targetArchive);
+            ZipFile archive = new ZipFile(filePath);
             for (ZipEntry archivedFile : archive.stream().toList()) {
                 if (!archivedFile.isDirectory() && archivedFile.getSize() > 1) {
                     String currentFileName = archivedFile.getName();
                     //This will just get the 'filename' and not any folder structure of the archive, annoying to find out
                     currentFileName = currentFileName.substring(currentFileName.lastIndexOf("/") + 1);
-                    String currentFilePath = outputFolderPath + File.separator + currentFileName;
+                    File currentFile = new File(outputFolder, currentFileName);
                     InputStream archivedFileInputStream = archive.getInputStream(archivedFile);
-                    FileOutputStream out = new FileOutputStream(currentFilePath);
+                    FileOutputStream out = new FileOutputStream(currentFile);
                     byte[] content = archivedFileInputStream.readAllBytes();
                     archivedFileInputStream.close();
                     out.write(content);
